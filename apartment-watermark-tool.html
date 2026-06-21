@@ -83,6 +83,8 @@
   .card .name{font-size:13px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
   .card .row{display:flex; align-items:center; gap:7px; flex-wrap:wrap}
   .card .row.between{justify-content:space-between}
+  .card .ctl-label{font-size:12px; color:var(--muted)}
+  .card input[type=range]{accent-color:var(--accent)}
   .chk{display:flex; align-items:center; gap:7px; font-size:13px; cursor:pointer; user-select:none}
   .chk input{width:16px; height:16px; accent-color:var(--accent)}
   .empty{
@@ -130,13 +132,7 @@
       <div class="logo-preview" id="logoPreview" style="display:none">
         <img id="logoImg" alt="logo">
         <div class="logo-controls">
-          <button class="btn small iconbtn" id="logoRotL" title="Rotate logo left 90°" type="button">↺</button>
-          <button class="btn small iconbtn" id="logoRotR" title="Rotate logo right 90°" type="button">↻</button>
-          <label style="display:flex;flex-direction:column;gap:2px">
-            fine angle: <span id="logoAngleVal">0°</span>
-            <input type="range" id="logoAngle" min="-180" max="180" step="1" value="0">
-          </label>
-          <button class="btn small ghost" id="logoRotReset" type="button">reset</button>
+          <span>Rotate the logo per-photo on each card below.</span>
           <button class="btn small ghost" id="logoRemove" type="button">remove</button>
         </div>
       </div>
@@ -167,8 +163,8 @@
 <script>
 "use strict";
 /* ============================ State ============================ */
-const apts = [];          // { id, image, name, rotation(0/90/180/270), selected }
-let logo = { image:null, rotation:0 };  // rotation in degrees (free)
+const apts = [];          // { id, image, name, rotation(0/90/180/270), logoRotation(deg), selected }
+let logo = { image:null };  // logo rotation is per-photo (stored on each apt)
 let nextId = 1;
 let activeZone = 'apt';
 
@@ -229,8 +225,9 @@ function compose(apt){
   ctx.restore();
 
   if(logo.image){
-    drawLogoCenter(ctx, cw, ch);
-    drawLogoCorner(ctx, cw, ch);
+    const logoRot = apt.logoRotation || 0;
+    drawLogoCenter(ctx, cw, ch, logoRot);
+    drawLogoCorner(ctx, cw, ch, logoRot);
   }
   return canvas;
 }
@@ -238,29 +235,29 @@ function rotatedBBox(w,h,deg){
   const a = deg*Math.PI/180, c = Math.abs(Math.cos(a)), s = Math.abs(Math.sin(a));
   return { w: w*c + h*s, h: w*s + h*c };
 }
-function drawLogoCenter(ctx, cw, ch){
+function drawLogoCenter(ctx, cw, ch, rotation){
   const lw = logo.image.naturalWidth, lh = logo.image.naturalHeight;
   const targetW = cw*CENTER_WIDTH_RATIO;
   const scale = targetW/lw, dw = lw*scale, dh = lh*scale;
   ctx.save();
   ctx.globalAlpha = CENTER_OPACITY;
   ctx.translate(cw/2, ch/2);
-  ctx.rotate(logo.rotation*Math.PI/180);
+  ctx.rotate(rotation*Math.PI/180);
   ctx.drawImage(logo.image, -dw/2, -dh/2, dw, dh);
   ctx.restore();
 }
-function drawLogoCorner(ctx, cw, ch){
+function drawLogoCorner(ctx, cw, ch, rotation){
   const lw = logo.image.naturalWidth, lh = logo.image.naturalHeight;
   const targetW = cw*CORNER_WIDTH_RATIO;
   const scale = targetW/lw, dw = lw*scale, dh = lh*scale;
   const pad = cw*CORNER_PADDING_RATIO;
-  const bb = rotatedBBox(dw, dh, logo.rotation);   // bounding box after rotation
+  const bb = rotatedBBox(dw, dh, rotation);   // bounding box after rotation
   const cx = pad + bb.w/2;
   const cy = ch - pad - bb.h/2;
   ctx.save();
   ctx.globalAlpha = 1;
   ctx.translate(cx, cy);
-  ctx.rotate(logo.rotation*Math.PI/180);
+  ctx.rotate(rotation*Math.PI/180);
   ctx.drawImage(logo.image, -dw/2, -dh/2, dw, dh);
   ctx.restore();
 }
@@ -283,20 +280,37 @@ function render(){
 
     const meta = document.createElement('div');
     meta.className = 'meta';
+    const logoRotPct = (((apt.logoRotation||0)%360)+360)%360;
+    const sliderVal = logoRotPct>180 ? logoRotPct-360 : logoRotPct;
     meta.innerHTML = `
       <div class="name" title="${apt.name}">${apt.name}</div>
+      <div class="row between">
+        <span class="ctl-label">🏢 Apartment</span>
+        <div class="row">
+          <button class="btn small iconbtn rotl" title="Rotate apartment left 90°">↺</button>
+          <button class="btn small iconbtn rotr" title="Rotate apartment right 90°">↻</button>
+        </div>
+      </div>
+      <div class="row between" ${logo.image?'':'style="opacity:.4;pointer-events:none"'}>
+        <span class="ctl-label">🖼 Logo</span>
+        <div class="row">
+          <button class="btn small iconbtn lrotl" title="Rotate logo left 90°">↺</button>
+          <button class="btn small iconbtn lrotr" title="Rotate logo right 90°">↻</button>
+          <button class="btn small ghost lreset" title="Reset logo angle">reset</button>
+        </div>
+      </div>
+      <div class="row" ${logo.image?'':'style="opacity:.4;pointer-events:none"'}>
+        <span class="ctl-label">logo angle <span class="lval">${Math.round(sliderVal)}°</span></span>
+        <input type="range" class="langle" min="-180" max="180" step="1" value="${sliderVal}" style="flex:1">
+      </div>
       <div class="row between">
         <label class="chk">
           <input type="checkbox" ${apt.selected?'checked':''}> select
         </label>
         <div class="row">
-          <button class="btn small iconbtn rotl" title="Rotate left 90°">↺</button>
-          <button class="btn small iconbtn rotr" title="Rotate right 90°">↻</button>
+          <button class="btn small dl">⬇ Download</button>
+          <button class="btn small ghost rm">🗑 Remove</button>
         </div>
-      </div>
-      <div class="row between">
-        <button class="btn small dl">⬇ Download</button>
-        <button class="btn small ghost rm">🗑 Remove</button>
       </div>`;
     card.appendChild(meta);
 
@@ -305,6 +319,18 @@ function render(){
     });
     meta.querySelector('.rotl').addEventListener('click', ()=>{ apt.rotation -= 90; refreshCard(card, apt); });
     meta.querySelector('.rotr').addEventListener('click', ()=>{ apt.rotation += 90; refreshCard(card, apt); });
+
+    const langle = meta.querySelector('.langle');
+    const lval = meta.querySelector('.lval');
+    function syncSlider(){
+      let v = ((apt.logoRotation%360)+360)%360; if(v>180) v-=360;
+      langle.value = v; lval.textContent = Math.round(v)+'°';
+    }
+    meta.querySelector('.lrotl').addEventListener('click', ()=>{ apt.logoRotation = (apt.logoRotation||0)-90; syncSlider(); refreshCard(card, apt); });
+    meta.querySelector('.lrotr').addEventListener('click', ()=>{ apt.logoRotation = (apt.logoRotation||0)+90; syncSlider(); refreshCard(card, apt); });
+    meta.querySelector('.lreset').addEventListener('click', ()=>{ apt.logoRotation = 0; syncSlider(); refreshCard(card, apt); });
+    langle.addEventListener('input', e=>{ apt.logoRotation = +e.target.value; lval.textContent = Math.round(+e.target.value)+'°'; refreshCard(card, apt); });
+
     meta.querySelector('.dl').addEventListener('click', ()=> downloadOne(apt));
     meta.querySelector('.rm').addEventListener('click', ()=>{
       const i = apts.indexOf(apt); if(i>-1){ apts.splice(i,1); render(); }
@@ -330,7 +356,7 @@ async function addApartments(files){
     if(!file.type.startsWith('image/')) continue;
     try{
       const img = await fileToImage(file);
-      apts.push({ id:nextId++, image:img, name: file.name || ('apartment-'+nextId+'.png'), rotation:0, selected:false });
+      apts.push({ id:nextId++, image:img, name: file.name || ('apartment-'+nextId+'.png'), rotation:0, logoRotation:0, selected:false });
       added++;
     }catch(e){ console.error(e); }
   }
@@ -340,16 +366,13 @@ async function setLogo(file){
   if(!file || !file.type.startsWith('image/')) return;
   try{
     const img = await fileToImage(file);
-    logo.image = img; logo.rotation = 0;
+    logo.image = img;
     $('#logoImg').src = img.src;
     $('#logoPreview').style.display = 'flex';
     $('#logoBadge').textContent = 'logo set';
-    $('#logoAngle').value = 0; $('#logoAngleVal').textContent = '0°';
     render(); toast('Logo set');
   }catch(e){ console.error(e); }
 }
-function updateLogoAngleLabel(){ $('#logoAngleVal').textContent = Math.round(logo.rotation)+'°'; }
-
 /* ============================ Downloads ============================ */
 function canvasToBlob(canvas){
   return new Promise(res=> canvas.toBlob(res, 'image/png'));
@@ -507,17 +530,9 @@ document.addEventListener('paste', e=>{
 });
 
 /* ============================ Events: logo controls ============================ */
-$('#logoRotL').addEventListener('click', ()=>{ logo.rotation -= 90; syncLogoAngle(); render(); });
-$('#logoRotR').addEventListener('click', ()=>{ logo.rotation += 90; syncLogoAngle(); render(); });
-$('#logoAngle').addEventListener('input', e=>{ logo.rotation = +e.target.value; updateLogoAngleLabel(); render(); });
-$('#logoRotReset').addEventListener('click', ()=>{ logo.rotation = 0; syncLogoAngle(); render(); });
 $('#logoRemove').addEventListener('click', ()=>{
-  logo.image=null; logo.rotation=0; $('#logoPreview').style.display='none'; $('#logoBadge').textContent='no logo'; render();
+  logo.image=null; $('#logoPreview').style.display='none'; $('#logoBadge').textContent='no logo'; render();
 });
-function syncLogoAngle(){
-  let v = ((logo.rotation%360)+360)%360; if(v>180) v-=360;
-  $('#logoAngle').value = v; updateLogoAngleLabel();
-}
 
 /* ============================ Events: toolbar ============================ */
 $('#selectAll').addEventListener('click', ()=>{ apts.forEach(a=>a.selected=true); render(); });
