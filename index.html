@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Apartment Watermark Tool</title>
+<title>כלי סימון מים לתמונות דירות</title>
 <style>
   :root{
     --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --line:#2a2f3a;
@@ -37,7 +37,7 @@
     display:inline-block; background:var(--panel2); border:1px solid var(--line);
     border-radius:6px; padding:1px 7px; font-size:12px; font-family:ui-monospace,monospace; color:var(--text);
   }
-  .zone .badge{position:absolute; top:14px; right:14px; font-size:12px; color:var(--muted)}
+  .zone .badge{position:absolute; top:14px; inset-inline-end:14px; font-size:12px; color:var(--muted)}
   .logo-preview{margin-top:12px; display:flex; align-items:center; gap:12px}
   .logo-preview img{
     max-height:64px; max-width:140px; background:
@@ -63,7 +63,7 @@
     padding:12px 14px; margin-bottom:18px; position:sticky; top:0; z-index:5;
   }
   .toolbar .sep{width:1px; height:26px; background:var(--line); margin:0 2px}
-  .toolbar .count{color:var(--muted); font-size:13px; margin-right:auto}
+  .toolbar .count{color:var(--muted); font-size:13px; margin-inline-end:auto}
 
   .logo-controls{display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:13px; color:var(--muted)}
   .logo-controls input[type=range]{width:130px}
@@ -106,34 +106,34 @@
 </head>
 <body>
 <header>
-  <h1>🏢 Apartment Watermark Tool</h1>
-  <span class="hint">Runs fully offline in your browser — nothing is uploaded.</span>
+  <h1>🏢 כלי סימון מים לתמונות דירות</h1>
+  <span class="hint">פועל לגמרי במחשב שלך בדפדפן — שום דבר לא נשלח לאינטרנט.</span>
 </header>
 
 <div class="wrap">
   <!-- INPUT ZONES -->
   <div class="zones">
     <div class="zone active" id="aptZone">
-      <span class="badge" id="aptBadge">0 images</span>
-      <h2>1 · Apartment images</h2>
-      <p>Click here, then press <span class="kbd">Ctrl</span>+<span class="kbd">V</span> to paste,
-         or drag &amp; drop, or
-         <button class="btn small" id="aptPick" type="button">choose files…</button>
-         (multiple allowed)</p>
+      <span class="badge" id="aptBadge">0 תמונות</span>
+      <h2>1 · תמונות דירה</h2>
+      <p>לחצו כאן ואז <span class="kbd">Ctrl</span>+<span class="kbd">V</span> כדי להדביק,
+         או גררו לכאן, או
+         <button class="btn small" id="aptPick" type="button">בחרו קבצים…</button>
+         (אפשר לבחור כמה)</p>
       <input type="file" id="aptInput" accept="image/*" multiple>
     </div>
 
     <div class="zone" id="logoZone">
-      <span class="badge" id="logoBadge">no logo</span>
-      <h2>2 · Logo</h2>
-      <p>Click here, then <span class="kbd">Ctrl</span>+<span class="kbd">V</span>, drop, or
-         <button class="btn small" id="logoPick" type="button">choose file…</button></p>
+      <span class="badge" id="logoBadge">אין לוגו</span>
+      <h2>2 · לוגו</h2>
+      <p>לחצו כאן ואז <span class="kbd">Ctrl</span>+<span class="kbd">V</span>, גררו, או
+         <button class="btn small" id="logoPick" type="button">בחרו קובץ…</button></p>
       <input type="file" id="logoInput" accept="image/*">
       <div class="logo-preview" id="logoPreview" style="display:none">
         <img id="logoImg" alt="logo">
         <div class="logo-controls">
-          <span>Rotate the logo per-photo on each card below.</span>
-          <button class="btn small ghost" id="logoRemove" type="button">remove</button>
+          <span>סובבו את הלוגו בנפרד בכל תמונה בכרטיסים שלמטה.</span>
+          <button class="btn small ghost" id="logoRemove" type="button">הסר</button>
         </div>
       </div>
     </div>
@@ -141,23 +141,23 @@
 
   <!-- TOOLBAR -->
   <div class="toolbar" id="toolbar" style="display:none">
-    <span class="count" id="selCount">0 selected</span>
-    <button class="btn small" id="selectAll" type="button">Select all</button>
-    <button class="btn small" id="selectNone" type="button">Deselect all</button>
+    <span class="count" id="selCount">0 נבחרו</span>
+    <button class="btn small" id="selectAll" type="button">בחר הכל</button>
+    <button class="btn small" id="selectNone" type="button">בטל בחירה</button>
     <span class="sep"></span>
-    <button class="btn small" id="dlAll" type="button">⬇ Download all</button>
-    <button class="btn small" id="dlAllZip" type="button">🗜 Download all (zip)</button>
+    <button class="btn small" id="dlAll" type="button">⬇ הורד הכל</button>
+    <button class="btn small" id="dlAllZip" type="button">🗜 הורד הכל (zip)</button>
     <span class="sep"></span>
-    <button class="btn small primary" id="dlSel" type="button">⬇ Download selected</button>
-    <button class="btn small primary" id="dlSelZip" type="button">🗜 Download selected (zip)</button>
+    <button class="btn small primary" id="dlSel" type="button">⬇ הורד נבחרים</button>
+    <button class="btn small primary" id="dlSelZip" type="button">🗜 הורד נבחרים (zip)</button>
   </div>
 
   <!-- RESULTS -->
   <div id="grid" class="grid"></div>
-  <div id="empty" class="empty">No apartment images yet. Paste or choose images above to see watermarked previews.</div>
+  <div id="empty" class="empty">עדיין אין תמונות דירה. הדביקו או בחרו תמונות למעלה כדי לראות תצוגה מקדימה עם סימן המים.</div>
 </div>
 
-<footer>Logo is placed bottom-left (full opacity) and centered as a 25% watermark. Outputs are full-resolution PNG.</footer>
+<footer>הלוגו ממוקם בפינה השמאלית התחתונה (אטימות מלאה) וגם במרכז כסימן מים ב‑25% שקיפות. הקבצים נשמרים כ‑PNG ברזולוציה מלאה.</footer>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -288,7 +288,7 @@ function drawLogoCorner(ctx, cw, ch, rotation){
 function render(){
   emptyEl.style.display = apts.length ? 'none' : 'block';
   toolbar.style.display = apts.length ? 'flex' : 'none';
-  $('#aptBadge').textContent = apts.length + (apts.length===1?' image':' images');
+  $('#aptBadge').textContent = apts.length + (apts.length===1?' תמונה':' תמונות');
 
   grid.innerHTML = '';
   apts.forEach(apt=>{
@@ -307,31 +307,31 @@ function render(){
     meta.innerHTML = `
       <div class="name" title="${apt.name}">${apt.name}</div>
       <div class="row between">
-        <span class="ctl-label">🏢 Apartment</span>
+        <span class="ctl-label">🏢 דירה</span>
         <div class="row">
-          <button class="btn small iconbtn rotl" title="Rotate apartment left 90°">↺</button>
-          <button class="btn small iconbtn rotr" title="Rotate apartment right 90°">↻</button>
+          <button class="btn small iconbtn rotl" title="סובב דירה שמאלה 90°">↺</button>
+          <button class="btn small iconbtn rotr" title="סובב דירה ימינה 90°">↻</button>
         </div>
       </div>
       <div class="row between" ${logo.image?'':'style="opacity:.4;pointer-events:none"'}>
-        <span class="ctl-label">🖼 Logo</span>
+        <span class="ctl-label">🖼 לוגו</span>
         <div class="row">
-          <button class="btn small iconbtn lrotl" title="Rotate logo left 90°">↺</button>
-          <button class="btn small iconbtn lrotr" title="Rotate logo right 90°">↻</button>
-          <button class="btn small ghost lreset" title="Reset logo angle">reset</button>
+          <button class="btn small iconbtn lrotl" title="סובב לוגו שמאלה 90°">↺</button>
+          <button class="btn small iconbtn lrotr" title="סובב לוגו ימינה 90°">↻</button>
+          <button class="btn small ghost lreset" title="אפס זווית לוגו">איפוס</button>
         </div>
       </div>
       <div class="row" ${logo.image?'':'style="opacity:.4;pointer-events:none"'}>
-        <span class="ctl-label">logo angle <span class="lval">${Math.round(sliderVal)}°</span></span>
+        <span class="ctl-label">זווית לוגו <span class="lval">${Math.round(sliderVal)}°</span></span>
         <input type="range" class="langle" min="-180" max="180" step="1" value="${sliderVal}" style="flex:1">
       </div>
       <div class="row between">
         <label class="chk">
-          <input type="checkbox" ${apt.selected?'checked':''}> select
+          <input type="checkbox" ${apt.selected?'checked':''}> בחר
         </label>
         <div class="row">
-          <button class="btn small dl">⬇ Download</button>
-          <button class="btn small ghost rm">🗑 Remove</button>
+          <button class="btn small dl">⬇ הורד</button>
+          <button class="btn small ghost rm">🗑 הסר</button>
         </div>
       </div>`;
     card.appendChild(meta);
@@ -368,7 +368,7 @@ function refreshCard(card, apt){
 }
 function updateSelCount(){
   const n = apts.filter(a=>a.selected).length;
-  $('#selCount').textContent = n + ' selected';
+  $('#selCount').textContent = n + ' נבחרו';
 }
 
 /* ============================ Add images ============================ */
@@ -382,7 +382,7 @@ async function addApartments(files){
       added++;
     }catch(e){ console.error(e); }
   }
-  if(added){ render(); toast(added+' apartment image'+(added>1?'s':'')+' added'); }
+  if(added){ render(); toast('נוספו '+added+' תמונות דירה'); }
 }
 async function setLogo(file){
   if(!file || !file.type.startsWith('image/')) return;
@@ -391,8 +391,8 @@ async function setLogo(file){
     logo.image = img;
     $('#logoImg').src = img.src;
     $('#logoPreview').style.display = 'flex';
-    $('#logoBadge').textContent = 'logo set';
-    render(); toast('Logo set');
+    $('#logoBadge').textContent = 'לוגו הוגדר';
+    render(); toast('הלוגו הוגדר');
   }catch(e){ console.error(e); }
 }
 /* ============================ Downloads ============================ */
@@ -418,17 +418,17 @@ function uniqueNames(list){
   });
 }
 async function downloadMany(list){
-  if(!list.length){ toast('Nothing to download'); return; }
+  if(!list.length){ toast('אין מה להוריד'); return; }
   const named = uniqueNames(list);
   for(const {apt,name} of named){
     const blob = await canvasToBlob(compose(apt));
     triggerDownload(blob, name);
     await new Promise(r=>setTimeout(r, 250)); // stagger so the browser allows all
   }
-  toast('Downloaded '+named.length+' file'+(named.length>1?'s':''));
+  toast('הורדו '+named.length+' קבצים');
 }
 async function downloadZip(list){
-  if(!list.length){ toast('Nothing to download'); return; }
+  if(!list.length){ toast('אין מה להוריד'); return; }
   const named = uniqueNames(list);
   const entries = [];
   for(const {apt,name} of named){
@@ -438,7 +438,7 @@ async function downloadZip(list){
   }
   const zip = makeZip(entries);
   triggerDownload(new Blob([zip],{type:'application/zip'}), 'apartments_watermarked.zip');
-  toast('Zipped '+named.length+' file'+(named.length>1?'s':''));
+  toast('נארזו '+named.length+' קבצים ל‑zip');
 }
 
 /* ============================ Minimal ZIP (store, no deps) ============================ */
@@ -553,7 +553,7 @@ document.addEventListener('paste', e=>{
 
 /* ============================ Events: logo controls ============================ */
 $('#logoRemove').addEventListener('click', ()=>{
-  logo.image=null; $('#logoPreview').style.display='none'; $('#logoBadge').textContent='no logo'; render();
+  logo.image=null; $('#logoPreview').style.display='none'; $('#logoBadge').textContent='אין לוגו'; render();
 });
 
 /* ============================ Events: toolbar ============================ */
