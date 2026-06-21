@@ -172,6 +172,8 @@ const CENTER_WIDTH_RATIO = 0.50;   // watermark width vs image width
 const CENTER_OPACITY     = 0.25;
 const CORNER_WIDTH_RATIO  = 0.20;  // bottom-left logo width vs image width
 const CORNER_PADDING_RATIO= 0.03;
+const PHONE_NUMBER        = '054-707-7117';  // shown under the bottom-left logo
+const PHONE_FONT_RATIO    = 0.030; // phone font size vs image width
 
 /* ============================ DOM ============================ */
 const $ = s => document.querySelector(s);
@@ -252,13 +254,33 @@ function drawLogoCorner(ctx, cw, ch, rotation){
   const scale = targetW/lw, dw = lw*scale, dh = lh*scale;
   const pad = cw*CORNER_PADDING_RATIO;
   const bb = rotatedBBox(dw, dh, rotation);   // bounding box after rotation
+
+  // phone number occupies the very bottom-left; the logo sits above it
+  const fontSize = Math.max(11, cw*PHONE_FONT_RATIO);
+  const textGap = fontSize*0.5;
+  const textBaseline = ch - pad;              // bottom edge of the text
   const cx = pad + bb.w/2;
-  const cy = ch - pad - bb.h/2;
+  const cy = textBaseline - fontSize - textGap - bb.h/2;
+
   ctx.save();
   ctx.globalAlpha = 1;
   ctx.translate(cx, cy);
   ctx.rotate(rotation*Math.PI/180);
   ctx.drawImage(logo.image, -dw/2, -dh/2, dw, dh);
+  ctx.restore();
+
+  // phone number with dark outline for legibility on any background
+  ctx.save();
+  ctx.globalAlpha = 1;
+  ctx.font = `700 ${fontSize}px system-ui, Segoe UI, Arial, sans-serif`;
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  ctx.lineJoin = 'round';
+  ctx.lineWidth = Math.max(2, fontSize*0.14);
+  ctx.strokeStyle = 'rgba(0,0,0,0.6)';
+  ctx.fillStyle = '#ffffff';
+  ctx.strokeText(PHONE_NUMBER, pad, textBaseline);
+  ctx.fillText(PHONE_NUMBER, pad, textBaseline);
   ctx.restore();
 }
 
