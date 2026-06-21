@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apartment Watermark Tool</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --line:#2a2f3a;
+    --text:#e7e9ee; --muted:#9aa1ad; --accent:#4f8cff; --accent2:#3b6fd1;
+    --danger:#ff5d5d; --ok:#3ad29f;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg); color:var(--text); line-height:1.45;
+  }
+  header{
+    padding:18px 24px; border-bottom:1px solid var(--line);
+    display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  }
+  header h1{font-size:18px; margin:0; font-weight:650}
+  header .hint{color:var(--muted); font-size:13px}
+  .wrap{max-width:1280px; margin:0 auto; padding:20px 24px 80px}
+  .zones{display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:22px}
+  @media (max-width:820px){ .zones{grid-template-columns:1fr} }
+  .zone{
+    background:var(--panel); border:2px dashed var(--line); border-radius:14px;
+    padding:20px; cursor:pointer; transition:.15s; position:relative;
+  }
+  .zone:hover{border-color:#3a4150}
+  .zone.active{border-color:var(--accent); box-shadow:0 0 0 3px rgba(79,140,255,.15)}
+  .zone.drag{border-color:var(--ok); background:#16241f}
+  .zone h2{margin:0 0 6px; font-size:15px}
+  .zone p{margin:0; color:var(--muted); font-size:13px}
+  .zone .kbd{
+    display:inline-block; background:var(--panel2); border:1px solid var(--line);
+    border-radius:6px; padding:1px 7px; font-size:12px; font-family:ui-monospace,monospace; color:var(--text);
+  }
+  .zone .badge{position:absolute; top:14px; right:14px; font-size:12px; color:var(--muted)}
+  .logo-preview{margin-top:12px; display:flex; align-items:center; gap:12px}
+  .logo-preview img{
+    max-height:64px; max-width:140px; background:
+      conic-gradient(#2a2f3a 25%, transparent 0 50%, #2a2f3a 0 75%, transparent 0) 0 0/16px 16px;
+    border:1px solid var(--line); border-radius:8px; padding:4px;
+  }
+  .btn{
+    background:var(--panel2); color:var(--text); border:1px solid var(--line);
+    border-radius:9px; padding:8px 13px; font-size:13px; cursor:pointer; transition:.12s;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .btn:hover{border-color:#3f4757; background:#252a35}
+  .btn.primary{background:var(--accent); border-color:var(--accent); color:#fff}
+  .btn.primary:hover{background:var(--accent2)}
+  .btn.small{padding:5px 9px; font-size:12px; border-radius:7px}
+  .btn:disabled{opacity:.45; cursor:not-allowed}
+  .btn.ghost{background:transparent}
+  input[type=file]{display:none}
+
+  .toolbar{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    background:var(--panel); border:1px solid var(--line); border-radius:12px;
+    padding:12px 14px; margin-bottom:18px; position:sticky; top:0; z-index:5;
+  }
+  .toolbar .sep{width:1px; height:26px; background:var(--line); margin:0 2px}
+  .toolbar .count{color:var(--muted); font-size:13px; margin-right:auto}
+
+  .logo-controls{display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:13px; color:var(--muted)}
+  .logo-controls input[type=range]{width:130px}
+
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px}
+  .card{
+    background:var(--panel); border:1px solid var(--line); border-radius:14px; overflow:hidden;
+    display:flex; flex-direction:column;
+  }
+  .card.selected{border-color:var(--accent); box-shadow:0 0 0 2px rgba(79,140,255,.2)}
+  .card .preview{
+    background:#0b0d11; display:flex; align-items:center; justify-content:center;
+    padding:10px; min-height:180px;
+  }
+  .card .preview canvas{max-width:100%; max-height:360px; border-radius:6px; display:block}
+  .card .meta{padding:10px 12px; display:flex; flex-direction:column; gap:8px}
+  .card .name{font-size:13px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .card .row{display:flex; align-items:center; gap:7px; flex-wrap:wrap}
+  .card .row.between{justify-content:space-between}
+  .chk{display:flex; align-items:center; gap:7px; font-size:13px; cursor:pointer; user-select:none}
+  .chk input{width:16px; height:16px; accent-color:var(--accent)}
+  .empty{
+    text-align:center; color:var(--muted); padding:60px 20px; border:1px dashed var(--line);
+    border-radius:14px;
+  }
+  .iconbtn{
+    width:32px; height:32px; padding:0; justify-content:center; font-size:15px;
+  }
+  footer{color:var(--muted); font-size:12px; text-align:center; padding:24px}
+  .toast{
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+    background:var(--panel2); border:1px solid var(--line); color:var(--text);
+    padding:10px 16px; border-radius:10px; font-size:13px; opacity:0; transition:.25s; pointer-events:none;
+    z-index:50;
+  }
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+<header>
+  <h1>🏢 Apartment Watermark Tool</h1>
+  <span class="hint">Runs fully offline in your browser — nothing is uploaded.</span>
+</header>
+
+<div class="wrap">
+  <!-- INPUT ZONES -->
+  <div class="zones">
+    <div class="zone active" id="aptZone">
+      <span class="badge" id="aptBadge">0 images</span>
+      <h2>1 · Apartment images</h2>
+      <p>Click here, then press <span class="kbd">Ctrl</span>+<span class="kbd">V</span> to paste,
+         or drag &amp; drop, or
+         <button class="btn small" id="aptPick" type="button">choose files…</button>
+         (multiple allowed)</p>
+      <input type="file" id="aptInput" accept="image/*" multiple>
+    </div>
+
+    <div class="zone" id="logoZone">
+      <span class="badge" id="logoBadge">no logo</span>
+      <h2>2 · Logo</h2>
+      <p>Click here, then <span class="kbd">Ctrl</span>+<span class="kbd">V</span>, drop, or
+         <button class="btn small" id="logoPick" type="button">choose file…</button></p>
+      <input type="file" id="logoInput" accept="image/*">
+      <div class="logo-preview" id="logoPreview" style="display:none">
+        <img id="logoImg" alt="logo">
+        <div class="logo-controls">
+          <button class="btn small iconbtn" id="logoRotL" title="Rotate logo left 90°" type="button">↺</button>
+          <button class="btn small iconbtn" id="logoRotR" title="Rotate logo right 90°" type="button">↻</button>
+          <label style="display:flex;flex-direction:column;gap:2px">
+            fine angle: <span id="logoAngleVal">0°</span>
+            <input type="range" id="logoAngle" min="-180" max="180" step="1" value="0">
+          </label>
+          <button class="btn small ghost" id="logoRotReset" type="button">reset</button>
+          <button class="btn small ghost" id="logoRemove" type="button">remove</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar" id="toolbar" style="display:none">
+    <span class="count" id="selCount">0 selected</span>
+    <button class="btn small" id="selectAll" type="button">Select all</button>
+    <button class="btn small" id="selectNone" type="button">Deselect all</button>
+    <span class="sep"></span>
+    <button class="btn small" id="dlAll" type="button">⬇ Download all</button>
+    <button class="btn small" id="dlAllZip" type="button">🗜 Download all (zip)</button>
+    <span class="sep"></span>
+    <button class="btn small primary" id="dlSel" type="button">⬇ Download selected</button>
+    <button class="btn small primary" id="dlSelZip" type="button">🗜 Download selected (zip)</button>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="grid" class="grid"></div>
+  <div id="empty" class="empty">No apartment images yet. Paste or choose images above to see watermarked previews.</div>
+</div>
+
+<footer>Logo is placed bottom-left (full opacity) and centered as a 25% watermark. Outputs are full-resolution PNG.</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+/* ============================ State ============================ */
+const apts = [];          // { id, image, name, rotation(0/90/180/270), selected }
+let logo = { image:null, rotation:0 };  // rotation in degrees (free)
+let nextId = 1;
+let activeZone = 'apt';
+
+const CENTER_WIDTH_RATIO = 0.50;   // watermark width vs image width
+const CENTER_OPACITY     = 0.25;
+const CORNER_WIDTH_RATIO  = 0.20;  // bottom-left logo width vs image width
+const CORNER_PADDING_RATIO= 0.03;
+
+/* ============================ DOM ============================ */
+const $ = s => document.querySelector(s);
+const grid = $('#grid'), emptyEl = $('#empty'), toolbar = $('#toolbar');
+const aptZone = $('#aptZone'), logoZone = $('#logoZone');
+
+/* ============================ Helpers ============================ */
+function toast(msg){
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(()=>t.classList.remove('show'), 1800);
+}
+function loadImage(src){
+  return new Promise((res,rej)=>{
+    const img = new Image();
+    img.onload = ()=>res(img); img.onerror = rej; img.src = src;
+  });
+}
+function fileToImage(file){
+  return new Promise((res,rej)=>{
+    const fr = new FileReader();
+    fr.onload = ()=> loadImage(fr.result).then(res).catch(rej);
+    fr.onerror = rej; fr.readAsDataURL(file);
+  });
+}
+function sanitize(name){
+  return (name||'').replace(/\.[^.]+$/,'').replace(/[^\w\-]+/g,'_').replace(/^_+|_+$/g,'') || 'apartment';
+}
+function setActiveZone(z){
+  activeZone = z;
+  aptZone.classList.toggle('active', z==='apt');
+  logoZone.classList.toggle('active', z==='logo');
+}
+
+/* ============================ Compositing ============================ */
+function compose(apt){
+  const r = ((apt.rotation%360)+360)%360;
+  const iw = apt.image.naturalWidth, ih = apt.image.naturalHeight;
+  const swap = (r===90||r===270);
+  const cw = swap?ih:iw, ch = swap?iw:ih;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = cw; canvas.height = ch;
+  const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingQuality = 'high';
+
+  // apartment (rotated in 90° steps)
+  ctx.save();
+  ctx.translate(cw/2, ch/2);
+  ctx.rotate(r*Math.PI/180);
+  ctx.drawImage(apt.image, -iw/2, -ih/2);
+  ctx.restore();
+
+  if(logo.image){
+    drawLogoCenter(ctx, cw, ch);
+    drawLogoCorner(ctx, cw, ch);
+  }
+  return canvas;
+}
+function rotatedBBox(w,h,deg){
+  const a = deg*Math.PI/180, c = Math.abs(Math.cos(a)), s = Math.abs(Math.sin(a));
+  return { w: w*c + h*s, h: w*s + h*c };
+}
+function drawLogoCenter(ctx, cw, ch){
+  const lw = logo.image.naturalWidth, lh = logo.image.naturalHeight;
+  const targetW = cw*CENTER_WIDTH_RATIO;
+  const scale = targetW/lw, dw = lw*scale, dh = lh*scale;
+  ctx.save();
+  ctx.globalAlpha = CENTER_OPACITY;
+  ctx.translate(cw/2, ch/2);
+  ctx.rotate(logo.rotation*Math.PI/180);
+  ctx.drawImage(logo.image, -dw/2, -dh/2, dw, dh);
+  ctx.restore();
+}
+function drawLogoCorner(ctx, cw, ch){
+  const lw = logo.image.naturalWidth, lh = logo.image.naturalHeight;
+  const targetW = cw*CORNER_WIDTH_RATIO;
+  const scale = targetW/lw, dw = lw*scale, dh = lh*scale;
+  const pad = cw*CORNER_PADDING_RATIO;
+  const bb = rotatedBBox(dw, dh, logo.rotation);   // bounding box after rotation
+  const cx = pad + bb.w/2;
+  const cy = ch - pad - bb.h/2;
+  ctx.save();
+  ctx.globalAlpha = 1;
+  ctx.translate(cx, cy);
+  ctx.rotate(logo.rotation*Math.PI/180);
+  ctx.drawImage(logo.image, -dw/2, -dh/2, dw, dh);
+  ctx.restore();
+}
+
+/* ============================ Render UI ============================ */
+function render(){
+  emptyEl.style.display = apts.length ? 'none' : 'block';
+  toolbar.style.display = apts.length ? 'flex' : 'none';
+  $('#aptBadge').textContent = apts.length + (apts.length===1?' image':' images');
+
+  grid.innerHTML = '';
+  apts.forEach(apt=>{
+    const card = document.createElement('div');
+    card.className = 'card' + (apt.selected?' selected':'');
+
+    const prev = document.createElement('div');
+    prev.className = 'preview';
+    prev.appendChild(compose(apt));
+    card.appendChild(prev);
+
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    meta.innerHTML = `
+      <div class="name" title="${apt.name}">${apt.name}</div>
+      <div class="row between">
+        <label class="chk">
+          <input type="checkbox" ${apt.selected?'checked':''}> select
+        </label>
+        <div class="row">
+          <button class="btn small iconbtn rotl" title="Rotate left 90°">↺</button>
+          <button class="btn small iconbtn rotr" title="Rotate right 90°">↻</button>
+        </div>
+      </div>
+      <div class="row between">
+        <button class="btn small dl">⬇ Download</button>
+        <button class="btn small ghost rm">🗑 Remove</button>
+      </div>`;
+    card.appendChild(meta);
+
+    meta.querySelector('.chk input').addEventListener('change', e=>{
+      apt.selected = e.target.checked; card.classList.toggle('selected', apt.selected); updateSelCount();
+    });
+    meta.querySelector('.rotl').addEventListener('click', ()=>{ apt.rotation -= 90; refreshCard(card, apt); });
+    meta.querySelector('.rotr').addEventListener('click', ()=>{ apt.rotation += 90; refreshCard(card, apt); });
+    meta.querySelector('.dl').addEventListener('click', ()=> downloadOne(apt));
+    meta.querySelector('.rm').addEventListener('click', ()=>{
+      const i = apts.indexOf(apt); if(i>-1){ apts.splice(i,1); render(); }
+    });
+
+    grid.appendChild(card);
+  });
+  updateSelCount();
+}
+function refreshCard(card, apt){
+  const prev = card.querySelector('.preview');
+  prev.innerHTML = ''; prev.appendChild(compose(apt));
+}
+function updateSelCount(){
+  const n = apts.filter(a=>a.selected).length;
+  $('#selCount').textContent = n + ' selected';
+}
+
+/* ============================ Add images ============================ */
+async function addApartments(files){
+  let added = 0;
+  for(const file of files){
+    if(!file.type.startsWith('image/')) continue;
+    try{
+      const img = await fileToImage(file);
+      apts.push({ id:nextId++, image:img, name: file.name || ('apartment-'+nextId+'.png'), rotation:0, selected:false });
+      added++;
+    }catch(e){ console.error(e); }
+  }
+  if(added){ render(); toast(added+' apartment image'+(added>1?'s':'')+' added'); }
+}
+async function setLogo(file){
+  if(!file || !file.type.startsWith('image/')) return;
+  try{
+    const img = await fileToImage(file);
+    logo.image = img; logo.rotation = 0;
+    $('#logoImg').src = img.src;
+    $('#logoPreview').style.display = 'flex';
+    $('#logoBadge').textContent = 'logo set';
+    $('#logoAngle').value = 0; $('#logoAngleVal').textContent = '0°';
+    render(); toast('Logo set');
+  }catch(e){ console.error(e); }
+}
+function updateLogoAngleLabel(){ $('#logoAngleVal').textContent = Math.round(logo.rotation)+'°'; }
+
+/* ============================ Downloads ============================ */
+function canvasToBlob(canvas){
+  return new Promise(res=> canvas.toBlob(res, 'image/png'));
+}
+function triggerDownload(blob, filename){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 4000);
+}
+async function downloadOne(apt){
+  const blob = await canvasToBlob(compose(apt));
+  triggerDownload(blob, sanitize(apt.name)+'_watermarked.png');
+}
+function uniqueNames(list){
+  const seen = {}; return list.map(apt=>{
+    let base = sanitize(apt.name)+'_watermarked';
+    let name = base+'.png', i=1;
+    while(seen[name]){ name = base+'_'+(i++)+'.png'; }
+    seen[name]=1; return { apt, name };
+  });
+}
+async function downloadMany(list){
+  if(!list.length){ toast('Nothing to download'); return; }
+  const named = uniqueNames(list);
+  for(const {apt,name} of named){
+    const blob = await canvasToBlob(compose(apt));
+    triggerDownload(blob, name);
+    await new Promise(r=>setTimeout(r, 250)); // stagger so the browser allows all
+  }
+  toast('Downloaded '+named.length+' file'+(named.length>1?'s':''));
+}
+async function downloadZip(list){
+  if(!list.length){ toast('Nothing to download'); return; }
+  const named = uniqueNames(list);
+  const entries = [];
+  for(const {apt,name} of named){
+    const blob = await canvasToBlob(compose(apt));
+    const buf = new Uint8Array(await blob.arrayBuffer());
+    entries.push({ name, data: buf });
+  }
+  const zip = makeZip(entries);
+  triggerDownload(new Blob([zip],{type:'application/zip'}), 'apartments_watermarked.zip');
+  toast('Zipped '+named.length+' file'+(named.length>1?'s':''));
+}
+
+/* ============================ Minimal ZIP (store, no deps) ============================ */
+const CRC_TABLE = (()=>{
+  const t = new Uint32Array(256);
+  for(let n=0;n<256;n++){ let c=n; for(let k=0;k<8;k++){ c = (c&1)?(0xEDB88320 ^ (c>>>1)):(c>>>1); } t[n]=c>>>0; }
+  return t;
+})();
+function crc32(bytes){
+  let crc = 0xFFFFFFFF;
+  for(let i=0;i<bytes.length;i++){ crc = (crc>>>8) ^ CRC_TABLE[(crc ^ bytes[i]) & 0xFF]; }
+  return (crc ^ 0xFFFFFFFF) >>> 0;
+}
+function strBytes(s){ const a = new Uint8Array(s.length); for(let i=0;i<s.length;i++) a[i]=s.charCodeAt(i)&0xFF; return a; }
+function makeZip(files){
+  // ZIP with STORE method (PNGs are already compressed). Fixed DOS date/time.
+  const chunks = [], central = [];
+  let offset = 0;
+  const DOS_TIME = 0, DOS_DATE = 0x21<<5 | 1; // arbitrary valid date (1980-01-01-ish)
+  for(const f of files){
+    const nameB = strBytes(f.name);
+    const crc = crc32(f.data);
+    const size = f.data.length;
+    // local file header
+    const lh = new DataView(new ArrayBuffer(30));
+    lh.setUint32(0, 0x04034b50, true);
+    lh.setUint16(4, 20, true);          // version needed
+    lh.setUint16(6, 0x0800, true);      // flags: UTF-8 names
+    lh.setUint16(8, 0, true);           // method 0 = store
+    lh.setUint16(10, DOS_TIME, true);
+    lh.setUint16(12, DOS_DATE, true);
+    lh.setUint32(14, crc, true);
+    lh.setUint32(18, size, true);       // compressed size
+    lh.setUint32(22, size, true);       // uncompressed size
+    lh.setUint16(26, nameB.length, true);
+    lh.setUint16(28, 0, true);          // extra len
+    const lhB = new Uint8Array(lh.buffer);
+    chunks.push(lhB, nameB, f.data);
+
+    // central directory record
+    const cd = new DataView(new ArrayBuffer(46));
+    cd.setUint32(0, 0x02014b50, true);
+    cd.setUint16(4, 20, true);          // version made by
+    cd.setUint16(6, 20, true);          // version needed
+    cd.setUint16(8, 0x0800, true);
+    cd.setUint16(10, 0, true);
+    cd.setUint16(12, DOS_TIME, true);
+    cd.setUint16(14, DOS_DATE, true);
+    cd.setUint32(16, crc, true);
+    cd.setUint32(20, size, true);
+    cd.setUint32(24, size, true);
+    cd.setUint16(28, nameB.length, true);
+    cd.setUint16(30, 0, true);          // extra
+    cd.setUint16(32, 0, true);          // comment
+    cd.setUint16(34, 0, true);          // disk #
+    cd.setUint16(36, 0, true);          // internal attrs
+    cd.setUint32(38, 0, true);          // external attrs
+    cd.setUint32(42, offset, true);     // local header offset
+    central.push(new Uint8Array(cd.buffer), nameB);
+
+    offset += lhB.length + nameB.length + size;
+  }
+  const centralStart = offset;
+  let centralSize = 0; central.forEach(c=> centralSize += c.length);
+
+  const eocd = new DataView(new ArrayBuffer(22));
+  eocd.setUint32(0, 0x06054b50, true);
+  eocd.setUint16(4, 0, true);
+  eocd.setUint16(6, 0, true);
+  eocd.setUint16(8, files.length, true);
+  eocd.setUint16(10, files.length, true);
+  eocd.setUint32(12, centralSize, true);
+  eocd.setUint32(16, centralStart, true);
+  eocd.setUint16(20, 0, true);
+
+  const all = [...chunks, ...central, new Uint8Array(eocd.buffer)];
+  let total = 0; all.forEach(c=> total += c.length);
+  const out = new Uint8Array(total);
+  let p = 0; for(const c of all){ out.set(c, p); p += c.length; }
+  return out;
+}
+
+/* ============================ Events: zones ============================ */
+aptZone.addEventListener('click', e=>{ if(e.target.id!=='aptPick') setActiveZone('apt'); });
+logoZone.addEventListener('click', e=>{ setActiveZone('logo'); });
+
+$('#aptPick').addEventListener('click', e=>{ e.stopPropagation(); $('#aptInput').click(); });
+$('#logoPick').addEventListener('click', e=>{ e.stopPropagation(); $('#logoInput').click(); });
+$('#aptInput').addEventListener('change', e=>{ addApartments([...e.target.files]); e.target.value=''; });
+$('#logoInput').addEventListener('change', e=>{ setLogo(e.target.files[0]); e.target.value=''; });
+
+// drag & drop
+function wireDrop(zone, handler){
+  ['dragenter','dragover'].forEach(ev=> zone.addEventListener(ev, e=>{ e.preventDefault(); zone.classList.add('drag'); }));
+  ['dragleave','drop'].forEach(ev=> zone.addEventListener(ev, e=>{ e.preventDefault(); zone.classList.remove('drag'); }));
+  zone.addEventListener('drop', e=>{ handler([...e.dataTransfer.files]); });
+}
+wireDrop(aptZone, files=> addApartments(files));
+wireDrop(logoZone, files=> setLogo(files[0]));
+
+// paste — routes to the active zone
+document.addEventListener('paste', e=>{
+  const items = e.clipboardData && e.clipboardData.items;
+  if(!items) return;
+  const imgs = [];
+  for(const it of items){ if(it.type && it.type.startsWith('image/')){ const f=it.getAsFile(); if(f) imgs.push(f); } }
+  if(!imgs.length) return;
+  e.preventDefault();
+  if(activeZone==='logo') setLogo(imgs[0]);
+  else addApartments(imgs);
+});
+
+/* ============================ Events: logo controls ============================ */
+$('#logoRotL').addEventListener('click', ()=>{ logo.rotation -= 90; syncLogoAngle(); render(); });
+$('#logoRotR').addEventListener('click', ()=>{ logo.rotation += 90; syncLogoAngle(); render(); });
+$('#logoAngle').addEventListener('input', e=>{ logo.rotation = +e.target.value; updateLogoAngleLabel(); render(); });
+$('#logoRotReset').addEventListener('click', ()=>{ logo.rotation = 0; syncLogoAngle(); render(); });
+$('#logoRemove').addEventListener('click', ()=>{
+  logo.image=null; logo.rotation=0; $('#logoPreview').style.display='none'; $('#logoBadge').textContent='no logo'; render();
+});
+function syncLogoAngle(){
+  let v = ((logo.rotation%360)+360)%360; if(v>180) v-=360;
+  $('#logoAngle').value = v; updateLogoAngleLabel();
+}
+
+/* ============================ Events: toolbar ============================ */
+$('#selectAll').addEventListener('click', ()=>{ apts.forEach(a=>a.selected=true); render(); });
+$('#selectNone').addEventListener('click', ()=>{ apts.forEach(a=>a.selected=false); render(); });
+$('#dlAll').addEventListener('click', ()=> downloadMany(apts.slice()));
+$('#dlAllZip').addEventListener('click', ()=> downloadZip(apts.slice()));
+$('#dlSel').addEventListener('click', ()=> downloadMany(apts.filter(a=>a.selected)));
+$('#dlSelZip').addEventListener('click', ()=> downloadZip(apts.filter(a=>a.selected)));
+
+setActiveZone('apt');
+</script>
+</body>
+</html>
