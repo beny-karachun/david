@@ -64,6 +64,9 @@
   }
   .toolbar .sep{width:1px; height:26px; background:var(--line); margin:0 2px}
   .toolbar .count{color:var(--muted); font-size:13px; margin-inline-end:auto}
+  .toolbar .wm-ctl{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--muted)}
+  .toolbar .wm-ctl input[type=range]{width:120px; accent-color:var(--accent)}
+  .toolbar .wm-ctl b{color:var(--text); font-weight:600; min-width:34px; text-align:center}
 
   .logo-controls{display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:13px; color:var(--muted)}
   .logo-controls input[type=range]{width:130px}
@@ -142,6 +145,11 @@
   <!-- TOOLBAR -->
   <div class="toolbar" id="toolbar" style="display:none">
     <span class="count" id="selCount">0 נבחרו</span>
+    <label class="wm-ctl" title="שקיפות סימן המים המרכזי — חל על כל התמונות">
+      שקיפות סימן מים <b id="wmVal">25%</b>
+      <input type="range" id="wmOpacity" min="0" max="100" step="1" value="25">
+    </label>
+    <span class="sep"></span>
     <button class="btn small" id="selectAll" type="button">בחר הכל</button>
     <button class="btn small" id="selectNone" type="button">בטל בחירה</button>
     <span class="sep"></span>
@@ -165,6 +173,7 @@
 /* ============================ State ============================ */
 const apts = [];          // { id, image, name, rotation(0/90/180/270), logoRotation(deg), selected }
 let logo = { image:null };  // logo rotation is per-photo (stored on each apt)
+let watermarkOpacity = null;  // global central-watermark opacity (0..1); null = use CENTER_OPACITY default
 let nextId = 1;
 let activeZone = 'apt';
 
@@ -228,7 +237,7 @@ function compose(apt){
 
   if(logo.image){
     const logoRot = apt.logoRotation || 0;
-    drawLogoCenter(ctx, cw, ch, logoRot);
+    drawLogoCenter(ctx, cw, ch, logoRot, watermarkOpacity);
     drawLogoCorner(ctx, cw, ch, logoRot);
   }
   return canvas;
@@ -237,12 +246,12 @@ function rotatedBBox(w,h,deg){
   const a = deg*Math.PI/180, c = Math.abs(Math.cos(a)), s = Math.abs(Math.sin(a));
   return { w: w*c + h*s, h: w*s + h*c };
 }
-function drawLogoCenter(ctx, cw, ch, rotation){
+function drawLogoCenter(ctx, cw, ch, rotation, opacity){
   const lw = logo.image.naturalWidth, lh = logo.image.naturalHeight;
   const targetW = cw*CENTER_WIDTH_RATIO;
   const scale = targetW/lw, dw = lw*scale, dh = lh*scale;
   ctx.save();
-  ctx.globalAlpha = CENTER_OPACITY;
+  ctx.globalAlpha = (opacity==null? CENTER_OPACITY : opacity);
   ctx.translate(cw/2, ch/2);
   ctx.rotate(rotation*Math.PI/180);
   ctx.drawImage(logo.image, -dw/2, -dh/2, dw, dh);
@@ -365,6 +374,10 @@ function render(){
 function refreshCard(card, apt){
   const prev = card.querySelector('.preview');
   prev.innerHTML = ''; prev.appendChild(compose(apt));
+}
+function refreshAllPreviews(){
+  const cards = grid.children;
+  for(let i=0; i<apts.length && i<cards.length; i++){ refreshCard(cards[i], apts[i]); }
 }
 function updateSelCount(){
   const n = apts.filter(a=>a.selected).length;
@@ -557,6 +570,14 @@ $('#logoRemove').addEventListener('click', ()=>{
 });
 
 /* ============================ Events: toolbar ============================ */
+watermarkOpacity = CENTER_OPACITY;
+$('#wmOpacity').value = Math.round(CENTER_OPACITY*100);
+$('#wmVal').textContent = Math.round(CENTER_OPACITY*100)+'%';
+$('#wmOpacity').addEventListener('input', e=>{
+  watermarkOpacity = +e.target.value/100;
+  $('#wmVal').textContent = Math.round(+e.target.value)+'%';
+  refreshAllPreviews();
+});
 $('#selectAll').addEventListener('click', ()=>{ apts.forEach(a=>a.selected=true); render(); });
 $('#selectNone').addEventListener('click', ()=>{ apts.forEach(a=>a.selected=false); render(); });
 $('#dlAll').addEventListener('click', ()=> downloadMany(apts.slice()));
