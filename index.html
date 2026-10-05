@@ -81,7 +81,7 @@
   <section aria-labelledby="toolsHeading">
     <div class="section-heading">
       <h2 id="toolsHeading" data-i18n="allTools">Все инструменты</h2>
-      <span class="tool-count" data-i18n="toolCount">1 инструмент</span>
+      <span class="tool-count" data-i18n="toolCount">2 инструмента</span>
     </div>
     <div class="tools-grid">
       <a class="tool-card" href="./apartment-images.html" aria-labelledby="apartmentTitle" aria-describedby="apartmentDescription">
@@ -120,12 +120,41 @@
           <div class="card-action"><span data-i18n="openTool">Открыть инструмент</span><span class="arrow" aria-hidden="true">→</span></div>
         </div>
       </a>
+      <a class="tool-card" href="./customer-photos.html" aria-labelledby="customerTitle" aria-describedby="customerDescription">
+        <div class="tool-art" aria-hidden="true" style="background:linear-gradient(145deg,#49332c,#252026)">
+          <svg viewBox="0 0 360 204" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="360" height="204" rx="8" fill="#D8E2EC"/>
+            <path d="M0 0H360V150H0Z" fill="#B4C5D7"/>
+            <rect x="20" y="20" width="70" height="98" rx="5" fill="#D8E2EC"/>
+            <path d="M55 20V118M20 69H90" stroke="#92A9C2" stroke-width="4"/>
+            <circle cx="143" cy="58" r="23" fill="#E5C2A8"/>
+            <path d="M110 150V111C110 92 124 83 143 83C162 83 176 92 176 111V150" fill="#4E617C"/>
+            <circle cx="218" cy="58" r="23" fill="#CDAA94"/>
+            <path d="M184 150V111C184 92 199 83 218 83C237 83 251 92 251 111V150" fill="#798CA2"/>
+            <path d="M170 106L185 112" stroke="#E5C2A8" stroke-width="12" stroke-linecap="round"/>
+            <rect y="150" width="360" height="54" fill="#F7F7F7"/>
+            <rect y="150" width="360" height="3" fill="#C36A46"/>
+            <svg x="15" y="160" width="62" height="39" viewBox="0 245 1600 1020"><image id="customerCardLogo" width="1600" height="1600"/></svg>
+            <text x="342" y="174" direction="rtl" text-anchor="start" font-size="12" font-family="Arial, sans-serif" font-weight="700" fill="#4D4F50">קניתי עם DK Group</text>
+            <text x="342" y="193" text-anchor="end" font-size="13" font-family="Arial, sans-serif" font-weight="700" fill="#C36A46">054-707-7117</text>
+          </svg>
+          <span class="status" data-i18n="available">Доступен</span>
+        </div>
+        <div class="card-body">
+          <p class="category">DK GROUP</p>
+          <h3 id="customerTitle" data-i18n="customerTitle">Фото с клиентами</h3>
+          <p class="description" id="customerDescription" data-i18n="customerDescription">Оформляйте совместные фото с клиентами: фирменный логотип, телефон и подпись о покупке или продаже.</p>
+          <div class="features"><span data-i18n="customerCaptions">Купил / Продал</span><span data-i18n="customerBranding">Логотип и телефон</span></div>
+          <div class="card-action"><span data-i18n="openTool">Открыть инструмент</span><span class="arrow" aria-hidden="true">→</span></div>
+        </div>
+      </a>
     </div>
   </section>
 </main>
 <footer>
   <div class="shell footer-inner"><span class="privacy-dot" aria-hidden="true"></span><span data-i18n="privacy">Изображения обрабатываются локально в вашем браузере.</span></div>
 </footer>
+<script src="./assets/dk-group-logo.js"></script>
 <script>
 "use strict";
 const LANGUAGE_STORAGE_KEY = 'apartmentWatermarkLanguage';
@@ -134,7 +163,9 @@ const translations = {
     brand: 'Портал инструментов', language: 'Язык', workspace: 'Рабочее пространство',
     title: 'Инструменты для бизнеса',
     intro: 'Всё необходимое для ежедневных задач в одном месте. Выберите инструмент и приступайте к работе.',
-    allTools: 'Все инструменты', toolCount: '1 инструмент', available: 'Доступен', category: 'Недвижимость',
+    allTools: 'Все инструменты', toolCount: '2 инструмента', available: 'Доступен', category: 'Недвижимость',
+    customerTitle: 'Фото с клиентами', customerDescription: 'Оформляйте совместные фото с клиентами: фирменный логотип, телефон и подпись о покупке или продаже.',
+    customerCaptions: 'Купил / Продал', customerBranding: 'Логотип и телефон',
     apartmentTitle: 'Фотографии квартир',
     apartmentDescription: 'Добавляйте логотип и водяной знак, поворачивайте фотографии и скачивайте готовые изображения.',
     watermarks: 'Водяные знаки', formats: 'PNG и ZIP', openTool: 'Открыть инструмент',
@@ -144,7 +175,9 @@ const translations = {
     brand: 'Business tools', language: 'Language', workspace: 'Your workspace',
     title: 'Tools for your business',
     intro: 'Your everyday tools, all in one place. Choose a tool and get to work.',
-    allTools: 'All tools', toolCount: '1 tool', available: 'Available', category: 'Real estate',
+    allTools: 'All tools', toolCount: '2 tools', available: 'Available', category: 'Real estate',
+    customerTitle: 'Customer photos', customerDescription: 'Brand photos with your customers: your logo, phone number, and a bought or sold caption.',
+    customerCaptions: 'Bought / Sold', customerBranding: 'Logo & phone',
     apartmentTitle: 'Apartment images',
     apartmentDescription: 'Add your logo and watermark, rotate photos, and download images ready to use.',
     watermarks: 'Watermarks', formats: 'PNG & ZIP', openTool: 'Open tool',
@@ -168,6 +201,7 @@ document.getElementById('language').addEventListener('change', e=>{
   applyLanguage();
 });
 applyLanguage();
+document.getElementById('customerCardLogo').setAttribute('href',window.DK_GROUP_LOGO_DATA_URL);
 </script>
 </body>
 </html>

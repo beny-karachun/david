@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Фото с клиентами · DK Group</title>
+<style>
+  :root{color-scheme:dark;--bg:#0f1115;--panel:#171a21;--line:#2a2f3a;--text:#e7e9ee;--muted:#9aa1ad;--accent:#c36a46}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.5}
+  .shell{width:min(1200px,100%);margin:0 auto;padding-inline:24px}
+  header{border-bottom:1px solid var(--line)}
+  .header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-block:20px}
+  .back-link{color:var(--muted);text-decoration:none;font-size:13px}
+  .back-link:hover{color:var(--text)}
+  .language-control{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px}
+  select{font:inherit;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 10px}
+  main{padding-block:36px 64px}
+  .eyebrow{color:#d08b6d;letter-spacing:.1em;font-size:12px;font-weight:600;text-transform:uppercase;margin:0 0 8px}
+  h1{font-size:clamp(26px,3.4vw,36px);line-height:1.2;margin:0;font-weight:650;letter-spacing:-.02em}
+  .intro{color:var(--muted);font-size:14px;max-width:680px;margin:13px 0 28px}
+  .workspace{display:grid;grid-template-columns:320px minmax(0,1fr);gap:24px;align-items:start}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;min-width:0}
+  h2,legend{font-size:14px;font-weight:600;margin:0 0 14px}
+  button{font:inherit;cursor:pointer}
+  .upload-zone{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;border:1px dashed #495263;border-radius:10px;background:#1c2028;color:var(--text);padding:24px 16px;text-align:center;font-size:14px}
+  .upload-zone:hover,.upload-zone.drag{border-color:var(--accent);background:#27201e}
+  .upload-zone svg{color:#d08b6d;width:30px;height:30px}
+  .upload-zone small{font-size:12px;color:var(--muted);font-weight:400}
+  .file-info{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;font-size:12px}
+  .file-info span{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .remove{border:0;background:none;color:#e0a48b;padding:4px 0;font-size:12px}
+  fieldset{border:0;padding:0;margin:26px 0 0;min-width:0}
+  .choice{display:grid;grid-template-columns:18px minmax(0,1fr);column-gap:10px;row-gap:5px;padding:13px 14px;border:1px solid var(--line);border-radius:10px;margin-top:10px;cursor:pointer;font-size:13px}
+  .choice:has(input:checked){border-color:var(--accent);background:#27201e}
+  .choice input{margin:3px 0 0;accent-color:var(--accent)}
+  .choice b{grid-column:2;font-size:14px;font-weight:500;text-align:left;unicode-bidi:isolate}
+  .caption-note,.brand-note{color:var(--muted);font-size:12px;margin:12px 0 0}
+  .brand-details{display:flex;align-items:center;gap:15px;border-top:1px solid var(--line);margin-top:24px;padding-top:20px}
+  .brand-logo{width:100px;height:66px;background:#f7f7f7;border-radius:6px;flex-shrink:0;overflow:hidden}
+  .brand-logo svg{display:block;width:100%;height:100%}
+  .phone{font-size:14px;font-weight:650;white-space:nowrap;color:#e0a48b}
+  .download{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);border:1px solid var(--accent);color:#fff;width:100%;border-radius:9px;padding:12px 16px;font-size:14px;font-weight:600;margin-top:24px}
+  .download:hover{background:#ad5938}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid #e0a48b;outline-offset:4px}
+  .preview-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .preview-heading h2{margin:0}
+  .dimensions{font-size:11px;color:var(--muted)}
+  .preview-stage{margin-top:18px;background:#0c0e12;border:1px solid var(--line);border-radius:10px;min-height:360px;padding:14px;display:flex;align-items:center;justify-content:center}
+  canvas{display:block;max-width:100%;max-height:75vh;width:auto;height:auto;border-radius:4px}
+  .empty-preview{text-align:center;color:var(--muted);padding:45px 20px;font-size:14px;max-width:350px}
+  .empty-preview svg{width:52px;height:52px;color:#555e6d;display:block;margin:0 auto 16px}
+  .preview-note{font-size:12px;color:var(--muted);margin:14px 0 0}
+  footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-block:22px}
+  .status-message{font-size:12px;color:#e0a48b;margin:14px 0 0;min-height:18px}
+  [hidden]{display:none!important}
+  @media(max-width:900px){.workspace{grid-template-columns:1fr}.preview-stage{min-height:240px}}
+  @media(max-width:420px){.shell{padding-inline:18px}.panel{padding:18px}.preview-stage{padding:8px}.choice b{font-size:13px}}
+</style>
+</head>
+<body>
+<header><div class="shell header-inner">
+  <a class="back-link" href="./index.html">← <span data-i18n="allTools">Все инструменты</span></a>
+  <label class="language-control"><span data-i18n="language">Язык</span><select id="language"><option value="ru" lang="ru">Русский</option><option value="en" lang="en">English</option></select></label>
+</div></header>
+<main class="shell">
+  <p class="eyebrow">DK GROUP</p>
+  <h1 data-i18n="title">Фото с клиентами</h1>
+  <p class="intro" data-i18n="intro">Загрузите совместную фотографию и выберите подпись. Логотип DK Group и ваш телефон появятся на фирменной полосе под фото.</p>
+  <div class="workspace">
+    <section class="panel" aria-labelledby="photoHeading">
+      <h2 id="photoHeading" data-i18n="photoHeading">1 · Фотография</h2>
+      <button type="button" class="upload-zone" id="pickPhoto">
+        <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 21V5M10 11L16 5L22 11M6 22V27H26V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span data-i18n="choosePhoto">Выберите фотографию</span>
+        <small data-i18n="uploadHint">Или перетащите сюда / вставьте Ctrl+V</small>
+      </button>
+      <input type="file" id="photoInput" accept="image/*" hidden>
+      <div class="file-info" id="fileInfo" hidden><span id="fileName"></span><button class="remove" type="button" id="removePhoto" data-i18n="remove">Удалить</button></div>
+      <fieldset>
+        <legend data-i18n="captionHeading">2 · Подпись</legend>
+        <label class="choice"><input type="radio" name="caption" value="bought" checked><span data-i18n="bought">Купил</span><b lang="he" dir="rtl">קניתי עם DK Group</b></label>
+        <label class="choice"><input type="radio" name="caption" value="sold"><span data-i18n="sold">Продал</span><b lang="he" dir="rtl">מכרתי עם DK Group</b></label>
+        <p class="caption-note" data-i18n="captionNote">Подпись на готовом изображении будет на иврите.</p>
+      </fieldset>
+      <div class="brand-details">
+        <div class="brand-logo"><svg viewBox="0 245 1600 1020" aria-hidden="true"><image id="brandLogo" width="1600" height="1600"/></svg></div>
+        <div><div class="phone" dir="ltr">054-707-7117</div><p class="brand-note" data-i18n="brandNote">На каждом изображении</p></div>
+      </div>
+      <button class="download" type="button" id="download" disabled data-i18n="download">↓ Скачать PNG</button>
+      <p class="status-message" id="status" role="status" aria-live="polite"></p>
+    </section>
+    <section class="panel" aria-labelledby="previewHeading">
+      <div class="preview-heading"><h2 id="previewHeading" data-i18n="preview">Предпросмотр</h2><span class="dimensions" id="dimensions"></span></div>
+      <div class="preview-stage">
+        <div class="empty-preview" id="emptyPreview"><svg viewBox="0 0 52 52" fill="none" aria-hidden="true"><rect x="5" y="7" width="42" height="38" rx="5" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="19" r="4" stroke="currentColor" stroke-width="2"/><path d="M6 37L21 26L30 34L38 28L46 35" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span data-i18n="empty">Загрузите фотографию, чтобы увидеть готовое изображение.</span></div>
+        <canvas id="previewCanvas" hidden role="img" aria-label="Предпросмотр фотографии с логотипом DK Group, подписью и телефоном"></canvas>
+      </div>
+      <p class="preview-note" data-i18n="previewNote">Фото сохраняется целиком. Фирменная полоса добавляется снизу; PNG скачивается в исходном разрешении фотографии.</p>
+    </section>
+  </div>
+</main>
+<footer><div class="shell" data-i18n="privacy">Всё работает локально в браузере. Ваши фотографии не отправляются в интернет.</div></footer>
+<script src="./assets/dk-group-logo.js"></script>
+<script>
+"use strict";
+const LANGUAGE_STORAGE_KEY = 'apartmentWatermarkLanguage';
+const CAPTION_STORAGE_KEY = 'dkCustomerPhotoCaption';
+const PHONE = '054-707-7117';
+const captions = { bought:'קניתי עם DK Group', sold:'מכרתי עם DK Group' };
+const translations = {
+  ru:{
+    title:'Фото с клиентами',allTools:'Все инструменты',language:'Язык',
+    intro:'Загрузите совместную фотографию и выберите подпись. Логотип DK Group и ваш телефон появятся на фирменной полосе под фото.',
+    photoHeading:'1 · Фотография',choosePhoto:'Выберите фотографию',uploadHint:'Или перетащите сюда / вставьте Ctrl+V',remove:'Удалить',
+    captionHeading:'2 · Подпись',bought:'Купил',sold:'Продал',captionNote:'Подпись на готовом изображении будет на иврите.',
+    brandNote:'На каждом изображении',download:'↓ Скачать PNG',preview:'Предпросмотр',empty:'Загрузите фотографию, чтобы увидеть готовое изображение.',
+    previewNote:'Фото сохраняется целиком. Фирменная полоса добавляется снизу; PNG скачивается в исходном разрешении фотографии.',
+    privacy:'Всё работает локально в браузере. Ваши фотографии не отправляются в интернет.',
+    previewLabel:'Предпросмотр фотографии с логотипом DK Group, подписью и телефоном',
+    loading:'Загрузка фотографии…',invalidPhoto:'Не удалось открыть изображение. Выберите другой файл.',downloaded:'Изображение скачано.',downloadError:'Не удалось сохранить изображение. Попробуйте ещё раз.',logoError:'Не удалось загрузить логотип. Обновите страницу.'
+  },
+  en:{
+    title:'Customer photos',allTools:'All tools',language:'Language',
+    intro:'Upload a photo together and choose a caption. Your DK Group logo and phone number will appear in a branded banner below the photo.',
+    photoHeading:'1 · Photo',choosePhoto:'Choose a photo',uploadHint:'Or drag it here / paste with Ctrl+V',remove:'Remove',
+    captionHeading:'2 · Caption',bought:'Bought',sold:'Sold',captionNote:'The caption on the finished image stays in Hebrew.',
+    brandNote:'On every image',download:'↓ Download PNG',preview:'Preview',empty:'Upload a photo to preview the finished image.',
+    previewNote:'Your entire photo is preserved. The branded banner is added below it; the PNG keeps the photo’s original resolution.',
+    privacy:'Everything runs locally in your browser. Your photos are never uploaded.',
+    previewLabel:'Photo preview with DK Group logo, caption, and phone number',
+    loading:'Loading photo…',invalidPhoto:'Could not open this image. Choose another file.',downloaded:'Image downloaded.',downloadError:'Could not save the image. Please try again.',logoError:'Could not load the logo. Refresh the page.'
+  }
+};
+const $ = id=>document.getElementById(id);
+let language='ru', caption='bought', photo=null, photoName='', photoRequest=0, loading=false, logoReady=false, statusKey='';
+try{
+  const savedLanguage=localStorage.getItem(LANGUAGE_STORAGE_KEY);
+  if(savedLanguage==='ru'||savedLanguage==='en') language=savedLanguage;
+  const savedCaption=localStorage.getItem(CAPTION_STORAGE_KEY);
+  if(savedCaption==='bought'||savedCaption==='sold') caption=savedCaption;
+}catch(e){ /* Defaults remain available without browser storage. */ }
+function setStatus(key){statusKey=key;$('status').textContent=key?translations[language][key]:'';}
+function applyLanguage(){
+  document.documentElement.lang=language;
+  document.title=translations[language].title+' · DK Group';
+  document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=translations[language][el.dataset.i18n];});
+  $('language').value=language;
+  $('previewCanvas').setAttribute('aria-label',translations[language].previewLabel);
+  setStatus(statusKey);
+}
+const brandImage=new Image();
+brandImage.onload=()=>{logoReady=true;renderPreview();};
+brandImage.onerror=()=>{setStatus('logoError');$('download').disabled=true;};
+brandImage.src=window.DK_GROUP_LOGO_DATA_URL;
+$('brandLogo').setAttribute('href',window.DK_GROUP_LOGO_DATA_URL);
+function renderPreview(){
+  const canvas=$('previewCanvas');
+  canvas.hidden=!photo; $('emptyPreview').hidden=!!photo;
+  $('download').disabled=!photo||!logoReady||loading;
+  $('fileInfo').hidden=!photo;
+  $('fileName').textContent=photoName;
+  if(!photo){$('dimensions').textContent='';canvas.width=1;canvas.height=1;return;}
+  if(!logoReady)return;
+  const width=photo.naturalWidth, height=photo.naturalHeight;
+  const banner=Math.max(1,Math.round(width*.245));
+  canvas.width=width;canvas.height=height+banner;
+  const ctx=canvas.getContext('2d');
+  ctx.imageSmoothingQuality='high';
+  ctx.drawImage(photo,0,0,width,height);
+  ctx.fillStyle='#f7f7f7';ctx.fillRect(0,height,width,banner);
+  const accent=Math.max(1,Math.round(width*.006));
+  ctx.fillStyle='#c36a46';ctx.fillRect(0,height,width,accent);
+  const pad=width*.045, logoW=width*.29, logoH=logoW*1020/1600;
+  ctx.drawImage(brandImage,0,245,1600,1020,pad,height+(banner-logoH)/2,logoW,logoH);
+  const textRight=width-pad, textWidth=width*.57;
+  let fontSize=width*.049;
+  ctx.direction='rtl';ctx.textAlign='right';ctx.textBaseline='middle';
+  ctx.font=`700 ${fontSize}px Arial, sans-serif`;
+  while(ctx.measureText(captions[caption]).width>textWidth&&fontSize>width*.025){fontSize-=width*.001;ctx.font=`700 ${fontSize}px Arial, sans-serif`;}
+  ctx.fillStyle='#4d4f50';ctx.fillText(captions[caption],textRight,height+banner*.40,textWidth);
+  ctx.direction='ltr';ctx.font=`700 ${width*.041}px Arial, sans-serif`;
+  ctx.fillStyle='#c36a46';ctx.fillText(PHONE,textRight,height+banner*.69,textWidth);
+  $('dimensions').textContent=`${canvas.width} × ${canvas.height} px`;
+}
+async function setPhoto(file){
+  if(!file)return;
+  if(!file.type.startsWith('image/')){setStatus('invalidPhoto');return;}
+  const request=++photoRequest;loading=true;setStatus('loading');$('download').disabled=true;
+  try{
+    const src=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file);});
+    const image=await new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=reject;img.src=src;});
+    if(request!==photoRequest)return;
+    photo=image;photoName=file.name||'customer-photo';loading=false;setStatus('');renderPreview();
+  }catch(e){if(request===photoRequest){loading=false;setStatus('invalidPhoto');renderPreview();}}
+}
+$('pickPhoto').addEventListener('click',()=>$('photoInput').click());
+$('photoInput').addEventListener('change',e=>{setPhoto(e.target.files[0]);e.target.value='';});
+['dragenter','dragover'].forEach(name=>$('pickPhoto').addEventListener(name,e=>{e.preventDefault();$('pickPhoto').classList.add('drag');}));
+['dragleave','drop'].forEach(name=>$('pickPhoto').addEventListener(name,e=>{e.preventDefault();$('pickPhoto').classList.remove('drag');}));
+$('pickPhoto').addEventListener('drop',e=>setPhoto([...e.dataTransfer.files].find(file=>file.type.startsWith('image/'))));
+document.addEventListener('paste',e=>{const item=[...(e.clipboardData?.items||[])].find(item=>item.type.startsWith('image/'));if(item){e.preventDefault();setPhoto(item.getAsFile());}});
+$('removePhoto').addEventListener('click',()=>{++photoRequest;photo=null;photoName='';loading=false;setStatus('');renderPreview();});
+document.querySelectorAll('input[name="caption"]').forEach(input=>{
+  input.checked=input.value===caption;
+  input.addEventListener('change',()=>{caption=input.value;try{localStorage.setItem(CAPTION_STORAGE_KEY,caption);}catch(e){}setStatus('');renderPreview();});
+});
+$('language').addEventListener('change',e=>{language=e.target.value;try{localStorage.setItem(LANGUAGE_STORAGE_KEY,language);}catch(e){}applyLanguage();});
+$('download').addEventListener('click',async()=>{
+  if(!photo||!logoReady||loading)return;
+  const name=photoName.replace(/\.[^.]+$/,'').replace(/[\\/:*?"<>|\x00-\x1F]/g,'_')||'customer-photo';
+  const downloadCaption=caption;
+  try{
+    const blob=await new Promise(resolve=>$('previewCanvas').toBlob(resolve,'image/png'));
+    if(!blob)throw new Error('PNG export failed');
+    const url=URL.createObjectURL(blob),link=document.createElement('a');
+    link.href=url;link.download=`${name}_DK_Group_${downloadCaption}.png`;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);setStatus('downloaded');
+  }catch(e){setStatus('downloadError');}
+});
+applyLanguage();
+</script>
+</body>
+</html>
