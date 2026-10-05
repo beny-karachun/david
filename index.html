@@ -3,765 +3,170 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Водяные знаки для фотографий квартир</title>
+<title>Инструменты для бизнеса</title>
 <style>
   :root{
-    --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --line:#2a2f3a;
-    --text:#e7e9ee; --muted:#9aa1ad; --accent:#4f8cff; --accent2:#3b6fd1;
-    --danger:#ff5d5d; --ok:#3ad29f;
+    color-scheme:dark;
+    --bg:#0f1115; --panel:#171a21; --line:#2a2f3a;
+    --text:#e7e9ee; --muted:#9aa1ad; --accent:#4f8cff;
   }
   *{box-sizing:border-box}
-  body{
-    margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-    background:var(--bg); color:var(--text); line-height:1.45;
+  body{margin:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; line-height:1.5}
+  a{color:inherit}
+  .shell{width:min(1120px,100%); margin:0 auto; padding-inline:28px}
+  header{border-bottom:1px solid var(--line)}
+  .header-inner{min-height:82px; display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; padding-top:18px; padding-bottom:18px}
+  .brand{display:inline-flex; align-items:center; gap:12px; font-weight:650; font-size:16px; text-decoration:none}
+  .brand-mark{display:grid; grid-template-columns:repeat(2,7px); gap:3px; padding:10px; border:1px solid #354866; border-radius:10px; background:#182338}
+  .brand-mark span{width:7px; height:7px; background:#7daaff; border-radius:2px}
+  .language-control{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--muted)}
+  select{background:var(--panel); color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px 10px; font:inherit; cursor:pointer}
+  a:focus-visible,select:focus-visible{outline:2px solid var(--accent); outline-offset:5px}
+  main{padding-top:64px; padding-bottom:84px; min-height:calc(100vh - 162px)}
+  .eyebrow{margin:0 0 16px; color:#83aaf1; font-size:12px; font-weight:600; letter-spacing:.13em; text-transform:uppercase}
+  h1{font-size:clamp(32px,4.5vw,48px); line-height:1.14; letter-spacing:-.035em; font-weight:650; margin:0; max-width:760px}
+  .intro{font-size:16px; color:var(--muted); margin:18px 0 0; max-width:620px}
+  .section-heading{display:flex; align-items:center; justify-content:space-between; gap:16px; margin:52px 0 20px}
+  h2{font-size:18px; font-weight:600; margin:0}
+  .tool-count{font-size:12px; color:var(--muted); padding:4px 10px; border:1px solid var(--line); border-radius:20px; white-space:nowrap}
+  .tools-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr)); gap:22px}
+  .tool-card{display:flex; flex-direction:column; min-width:0; overflow:hidden; border:1px solid var(--line); border-radius:16px; background:var(--panel); text-decoration:none; transition:border-color .18s,transform .18s,box-shadow .18s}
+  .tool-card:hover{border-color:#4a6491; transform:translateY(-3px); box-shadow:0 14px 36px #0003}
+  .tool-card:focus-visible{border-color:var(--accent)}
+  .tool-art{position:relative; padding:22px; background:linear-gradient(145deg,#213650,#18202d); border-bottom:1px solid var(--line)}
+  .tool-art svg{display:block; width:100%; height:auto; border-radius:8px}
+  .status{position:absolute; inset-inline-end:14px; top:14px; display:flex; align-items:center; gap:6px; color:#bcdfcd; font-size:11px; padding:4px 8px; border:1px solid #436756; border-radius:20px; background:#17271f}
+  .status::before{content:""; width:5px; height:5px; border-radius:50%; background:#77c49b}
+  .card-body{padding:22px; flex:1; display:flex; flex-direction:column; align-items:flex-start}
+  .category{font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:#83aaf1; margin:0 0 9px}
+  h3{font-size:21px; font-weight:600; line-height:1.3; margin:0}
+  .description{color:var(--muted); font-size:14px; margin:12px 0 20px}
+  .features{display:flex; flex-wrap:wrap; gap:7px; margin-top:auto}
+  .features span{font-size:11px; color:#b8c1d0; border:1px solid var(--line); border-radius:6px; padding:3px 7px}
+  .card-action{display:flex; justify-content:space-between; align-items:center; gap:12px; width:100%; margin-top:24px; padding-top:17px; border-top:1px solid var(--line); color:#91b5ff; font-weight:550; font-size:13px}
+  .arrow{font-size:19px; line-height:1; transition:transform .18s}
+  .tool-card:hover .arrow{transform:translateX(3px)}
+  footer{border-top:1px solid var(--line); color:var(--muted); font-size:12px}
+  .footer-inner{min-height:80px; display:flex; align-items:center; gap:8px}
+  .privacy-dot{width:6px; height:6px; border-radius:50%; background:#77c49b; flex-shrink:0}
+  @media(max-width:600px){
+    .shell{padding-left:20px; padding-right:20px}
+    main{padding-top:42px; padding-bottom:52px}
+    .section-heading{margin-top:36px}
+    .header-inner{gap:16px}
   }
-  header{
-    padding:18px 24px; border-bottom:1px solid var(--line);
-    display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
-  }
-  header h1{font-size:18px; margin:0; font-weight:650}
-  header .hint{color:var(--muted); font-size:13px}
-  .language-control{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--muted)}
-  .language-control select{
-    background:var(--panel2); color:var(--text); border:1px solid var(--line);
-    border-radius:7px; padding:6px 9px; font:inherit;
-  }
-  .wrap{max-width:1280px; margin:0 auto; padding:20px 24px 80px}
-  .zones{display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:22px}
-  @media (max-width:820px){ .zones{grid-template-columns:1fr} }
-  .zone{
-    background:var(--panel); border:2px dashed var(--line); border-radius:14px;
-    padding:20px; cursor:pointer; transition:.15s; position:relative; min-width:0;
-  }
-  .zone:hover{border-color:#3a4150}
-  .zone.active{border-color:var(--accent); box-shadow:0 0 0 3px rgba(79,140,255,.15)}
-  .zone.drag{border-color:var(--ok); background:#16241f}
-  .zone h2{margin:0 0 6px; font-size:15px}
-  .zone p{margin:0; color:var(--muted); font-size:13px}
-  .zone .kbd{
-    display:inline-block; background:var(--panel2); border:1px solid var(--line);
-    border-radius:6px; padding:1px 7px; font-size:12px; font-family:ui-monospace,monospace; color:var(--text);
-  }
-  .zone .badge{position:absolute; top:14px; inset-inline-end:14px; font-size:12px; color:var(--muted)}
-  .logo-preview{margin-top:12px; display:flex; align-items:center; gap:12px; flex-wrap:wrap}
-  .logo-preview img{
-    max-height:64px; max-width:140px; background:
-      conic-gradient(#2a2f3a 25%, transparent 0 50%, #2a2f3a 0 75%, transparent 0) 0 0/16px 16px;
-    border:1px solid var(--line); border-radius:8px; padding:4px;
-  }
-  .btn{
-    background:var(--panel2); color:var(--text); border:1px solid var(--line);
-    border-radius:9px; padding:8px 13px; font-size:13px; cursor:pointer; transition:.12s;
-    display:inline-flex; align-items:center; gap:6px;
-  }
-  .btn:hover{border-color:#3f4757; background:#252a35}
-  .btn.primary{background:var(--accent); border-color:var(--accent); color:#fff}
-  .btn.primary:hover{background:var(--accent2)}
-  .btn.small{padding:5px 9px; font-size:12px; border-radius:7px}
-  .btn:disabled{opacity:.45; cursor:not-allowed}
-  .btn.ghost{background:transparent}
-  input[type=file]{display:none}
-
-  .toolbar{
-    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
-    background:var(--panel); border:1px solid var(--line); border-radius:12px;
-    padding:12px 14px; margin-bottom:18px; position:sticky; top:0; z-index:5;
-  }
-  .toolbar .sep{width:1px; height:26px; background:var(--line); margin:0 2px}
-  .toolbar .count{color:var(--muted); font-size:13px; margin-inline-end:auto}
-  .toolbar .wm-ctl{display:flex; align-items:center; gap:8px; flex-wrap:wrap; max-width:100%; font-size:13px; color:var(--muted)}
-  .toolbar .wm-ctl input[type=range]{width:120px; accent-color:var(--accent)}
-  .toolbar .wm-ctl b{color:var(--text); font-weight:600; min-width:34px; text-align:center}
-
-  .logo-controls{display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:13px; color:var(--muted)}
-  .logo-controls input[type=range]{width:130px}
-
-  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr)); gap:16px}
-  .card{
-    background:var(--panel); border:1px solid var(--line); border-radius:14px; overflow:hidden;
-    display:flex; flex-direction:column;
-  }
-  .card.selected{border-color:var(--accent); box-shadow:0 0 0 2px rgba(79,140,255,.2)}
-  .card .preview{
-    background:#0b0d11; display:flex; align-items:center; justify-content:center;
-    padding:10px; min-height:180px;
-  }
-  .card .preview canvas{max-width:100%; max-height:360px; border-radius:6px; display:block}
-  .card .meta{padding:10px 12px; display:flex; flex-direction:column; gap:8px}
-  .card .name{font-size:13px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-  .card .row{display:flex; align-items:center; gap:7px; flex-wrap:wrap}
-  .card .row.between{justify-content:space-between}
-  .card .ctl-label{font-size:12px; color:var(--muted)}
-  .card input[type=range]{accent-color:var(--accent)}
-  .chk{display:flex; align-items:center; gap:7px; font-size:13px; cursor:pointer; user-select:none}
-  .chk input{width:16px; height:16px; accent-color:var(--accent)}
-  .empty{
-    text-align:center; color:var(--muted); padding:60px 20px; border:1px dashed var(--line);
-    border-radius:14px;
-  }
-  .iconbtn{
-    width:32px; height:32px; padding:0; justify-content:center; font-size:15px;
-  }
-  footer{color:var(--muted); font-size:12px; text-align:center; padding:24px}
-  .toast{
-    position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
-    background:var(--panel2); border:1px solid var(--line); color:var(--text);
-    padding:10px 16px; border-radius:10px; font-size:13px; opacity:0; transition:.25s; pointer-events:none;
-    z-index:50;
-  }
-  .toast.show{opacity:1}
-  @media (max-width:600px){
-    .zone .badge{position:static; display:block; margin-bottom:6px}
-    .toolbar{position:static}
-  }
+  @media(prefers-reduced-motion:reduce){.tool-card,.arrow{transition:none}.tool-card:hover{transform:none}}
 </style>
 </head>
 <body>
 <header>
-  <h1>🏢 <span data-i18n="toolTitle">Водяные знаки для фотографий квартир</span></h1>
-  <span class="hint" data-i18n="privacyHint">Всё работает локально в вашем браузере. Изображения не отправляются в интернет.</span>
-  <label class="language-control">
-    <span data-i18n="language">Язык</span>
-    <select id="language">
-      <option value="ru" lang="ru">Русский</option>
-      <option value="en" lang="en">English</option>
-    </select>
-  </label>
+  <div class="shell header-inner">
+    <a class="brand" href="./index.html">
+      <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+      <span data-i18n="brand">Портал инструментов</span>
+    </a>
+    <label class="language-control">
+      <span data-i18n="language">Язык</span>
+      <select id="language">
+        <option value="ru" lang="ru">Русский</option>
+        <option value="en" lang="en">English</option>
+      </select>
+    </label>
+  </div>
 </header>
-
-<div class="wrap">
-  <!-- INPUT ZONES -->
-  <div class="zones">
-    <div class="zone active" id="aptZone">
-      <span class="badge" id="aptBadge">0 фото</span>
-      <h2 data-i18n="photosHeading">1 · Фотографии квартиры</h2>
-      <p><span data-i18n="pasteHint">Нажмите здесь, затем</span> <span class="kbd">Ctrl</span>+<span class="kbd">V</span>
-         <span data-i18n="pasteOptions">для вставки, перетащите сюда или</span>
-         <button class="btn small" id="aptPick" type="button" data-i18n="chooseFiles">Выберите файлы…</button>
-         <span data-i18n="multipleAllowed">(можно выбрать несколько)</span></p>
-      <input type="file" id="aptInput" accept="image/*" multiple>
+<main class="shell">
+  <p class="eyebrow" data-i18n="workspace">Рабочее пространство</p>
+  <h1 data-i18n="title">Инструменты для бизнеса</h1>
+  <p class="intro" data-i18n="intro">Всё необходимое для ежедневных задач в одном месте. Выберите инструмент и приступайте к работе.</p>
+  <section aria-labelledby="toolsHeading">
+    <div class="section-heading">
+      <h2 id="toolsHeading" data-i18n="allTools">Все инструменты</h2>
+      <span class="tool-count" data-i18n="toolCount">1 инструмент</span>
     </div>
-
-    <div class="zone" id="logoZone">
-      <span class="badge" id="logoBadge">Нет логотипа</span>
-      <h2 data-i18n="logoHeading">2 · Логотип</h2>
-      <p><span data-i18n="pasteHint">Нажмите здесь, затем</span> <span class="kbd">Ctrl</span>+<span class="kbd">V</span>
-         <span data-i18n="pasteOptions">для вставки, перетащите сюда или</span>
-         <button class="btn small" id="logoPick" type="button" data-i18n="chooseFile">Выберите файл…</button></p>
-      <input type="file" id="logoInput" accept="image/*">
-      <div class="logo-preview" id="logoPreview" style="display:none">
-        <img id="logoImg" alt="Логотип" data-i18n-alt="logo">
-        <div class="logo-controls">
-          <span data-i18n="rotationHint">Поворачивайте логотип отдельно на каждой фотографии в карточках ниже.</span>
-          <button class="btn small ghost" id="logoRemove" type="button" data-i18n="remove">Удалить</button>
+    <div class="tools-grid">
+      <a class="tool-card" href="./apartment-images.html" aria-labelledby="apartmentTitle" aria-describedby="apartmentDescription">
+        <div class="tool-art" aria-hidden="true">
+          <svg viewBox="0 0 360 204" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="360" height="204" rx="8" fill="#B4C5D7"/>
+            <path d="M0 0H360V122H0Z" fill="#D8E2EC"/>
+            <path d="M238 18H336V124H238Z" fill="#829AB4"/>
+            <path d="M247 27H327V115H247Z" fill="#B8D4EA"/>
+            <path d="M286 27V115M247 71H327" stroke="#EAF0F5" stroke-width="5"/>
+            <path d="M0 122H360V204H0Z" fill="#9BAEC3"/>
+            <path d="M0 204L162 122M360 204L231 122" stroke="#869BB4" stroke-width="2"/>
+            <rect x="24" y="89" width="182" height="50" rx="10" fill="#516985"/>
+            <rect x="33" y="81" width="72" height="35" rx="8" fill="#637D9B"/>
+            <rect x="111" y="81" width="85" height="35" rx="8" fill="#718AA5"/>
+            <rect x="29" y="134" width="7" height="14" rx="2" fill="#34465F"/>
+            <rect x="193" y="134" width="7" height="14" rx="2" fill="#34465F"/>
+            <path d="M312 104V150" stroke="#516985" stroke-width="4"/>
+            <path d="M292 104H332L323 83H301L292 104Z" fill="#E9E4D9"/>
+            <ellipse cx="312" cy="151" rx="13" ry="3" fill="#516985"/>
+            <rect x="136" y="63" width="88" height="76" rx="10" fill="white" fill-opacity=".15"/>
+            <path d="M156 104L180 84L204 104M163 99V122H197V99M175 122V110H185V122" stroke="white" stroke-opacity=".45" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="12" y="159" width="48" height="33" rx="5" fill="#F1F5FA"/>
+            <path d="M23 176L36 165L49 176M27 173V185H45V173" stroke="#516985" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="status" data-i18n="available">Доступен</span>
         </div>
-      </div>
+        <div class="card-body">
+          <p class="category" data-i18n="category">Недвижимость</p>
+          <h3 id="apartmentTitle" data-i18n="apartmentTitle">Фотографии квартир</h3>
+          <p class="description" id="apartmentDescription" data-i18n="apartmentDescription">Добавляйте логотип и водяной знак, поворачивайте фотографии и скачивайте готовые изображения.</p>
+          <div class="features">
+            <span data-i18n="watermarks">Водяные знаки</span>
+            <span data-i18n="formats">PNG и ZIP</span>
+          </div>
+          <div class="card-action"><span data-i18n="openTool">Открыть инструмент</span><span class="arrow" aria-hidden="true">→</span></div>
+        </div>
+      </a>
     </div>
-  </div>
-
-  <!-- TOOLBAR -->
-  <div class="toolbar" id="toolbar" style="display:none">
-    <span class="count" id="selCount">Выбрано: 0</span>
-    <label class="wm-ctl" title="Непрозрачность логотипа в центре — для всех фотографий" data-i18n-title="centerOpacityHint">
-      <span data-i18n="centerOpacity">Непрозрачность в центре</span> <b id="wmVal">25%</b>
-      <input type="range" id="wmOpacity" min="0" max="100" step="1" value="25">
-    </label>
-    <label class="wm-ctl" title="Непрозрачность логотипа в левом нижнем углу — для всех фотографий" data-i18n-title="cornerOpacityHint">
-      <span data-i18n="cornerOpacity">Непрозрачность сбоку</span> <b id="cornerVal">100%</b>
-      <input type="range" id="cornerOpacity" min="0" max="100" step="1" value="100">
-    </label>
-    <span class="sep"></span>
-    <button class="btn small" id="selectAll" type="button" data-i18n="selectAll">Выбрать все</button>
-    <button class="btn small" id="selectNone" type="button" data-i18n="selectNone">Снять выделение</button>
-    <span class="sep"></span>
-    <button class="btn small" id="dlAll" type="button" data-i18n="downloadAll">⬇ Скачать все</button>
-    <button class="btn small" id="dlAllZip" type="button" data-i18n="downloadAllZip">🗜 Скачать все (ZIP)</button>
-    <span class="sep"></span>
-    <button class="btn small primary" id="dlSel" type="button" data-i18n="downloadSelected">⬇ Скачать выбранные</button>
-    <button class="btn small primary" id="dlSelZip" type="button" data-i18n="downloadSelectedZip">🗜 Скачать выбранные (ZIP)</button>
-  </div>
-
-  <!-- RESULTS -->
-  <div id="grid" class="grid"></div>
-  <div id="empty" class="empty" data-i18n="empty">Пока нет фотографий квартиры. Вставьте или выберите фотографии выше, чтобы увидеть их с водяным знаком.</div>
-</div>
-
-<footer data-i18n="footer">Логотип размещается в левом нижнем углу и в центре. Непрозрачность каждого логотипа регулируется отдельно, а настройки сохраняются в браузере. Файлы сохраняются в формате PNG с исходным разрешением.</footer>
-<div class="toast" id="toast"></div>
-
+  </section>
+</main>
+<footer>
+  <div class="shell footer-inner"><span class="privacy-dot" aria-hidden="true"></span><span data-i18n="privacy">Изображения обрабатываются локально в вашем браузере.</span></div>
+</footer>
 <script>
 "use strict";
-/* ============================ State ============================ */
-const apts = [];          // { id, image, name, rotation(0/90/180/270), logoRotation(deg), selected }
-let logo = { image:null };  // logo rotation is per-photo (stored on each apt)
-let nextId = 1;
-let activeZone = 'apt';
-
-const CENTER_WIDTH_RATIO = 0.50;   // watermark width vs image width
-const CENTER_OPACITY     = 0.25;
-const CORNER_OPACITY     = 1;
-const CORNER_WIDTH_RATIO  = 0.20;  // bottom-left logo width vs image width
-const CORNER_PADDING_RATIO= 0.03;
-const PHONE_NUMBER        = '054-707-7117';  // shown under the bottom-left logo
-const PHONE_FONT_RATIO    = 0.030; // phone font size vs image width
-const OPACITY_STORAGE_KEY = 'apartmentWatermarkOpacities';
-let watermarkOpacity = CENTER_OPACITY;
-let cornerOpacity = CORNER_OPACITY;
 const LANGUAGE_STORAGE_KEY = 'apartmentWatermarkLanguage';
-let language = 'ru';
-let lastToast = null;
-
-/* ============================ Translations ============================ */
 const translations = {
   ru: {
-    toolTitle: 'Водяные знаки для фотографий квартир',
-    privacyHint: 'Всё работает локально в вашем браузере. Изображения не отправляются в интернет.',
-    language: 'Язык',
-    photosHeading: '1 · Фотографии квартиры',
-    logoHeading: '2 · Логотип',
-    pasteHint: 'Нажмите здесь, затем',
-    pasteOptions: 'для вставки, перетащите сюда или',
-    chooseFiles: 'Выберите файлы…',
-    chooseFile: 'Выберите файл…',
-    multipleAllowed: '(можно выбрать несколько)',
-    rotationHint: 'Поворачивайте логотип отдельно на каждой фотографии в карточках ниже.',
-    remove: 'Удалить',
-    noLogo: 'Нет логотипа',
-    logoSet: 'Логотип загружен',
-    centerOpacity: 'Непрозрачность в центре',
-    centerOpacityHint: 'Непрозрачность логотипа в центре — для всех фотографий',
-    cornerOpacity: 'Непрозрачность сбоку',
-    cornerOpacityHint: 'Непрозрачность логотипа в левом нижнем углу — для всех фотографий',
-    selectAll: 'Выбрать все',
-    selectNone: 'Снять выделение',
-    downloadAll: '⬇ Скачать все',
-    downloadAllZip: '🗜 Скачать все (ZIP)',
-    downloadSelected: '⬇ Скачать выбранные',
-    downloadSelectedZip: '🗜 Скачать выбранные (ZIP)',
-    empty: 'Пока нет фотографий квартиры. Вставьте или выберите фотографии выше, чтобы увидеть их с водяным знаком.',
-    footer: 'Логотип размещается в левом нижнем углу и в центре. Непрозрачность каждого логотипа регулируется отдельно, а настройки сохраняются в браузере. Файлы сохраняются в формате PNG с исходным разрешением.',
-    photoCount: 'Фото: {count}',
-    selectedCount: 'Выбрано: {count}',
-    apartment: 'Квартира',
-    rotateApartmentLeft: 'Повернуть фотографию влево на 90°',
-    rotateApartmentRight: 'Повернуть фотографию вправо на 90°',
-    logo: 'Логотип',
-    rotateLogoLeft: 'Повернуть логотип влево на 90°',
-    rotateLogoRight: 'Повернуть логотип вправо на 90°',
-    resetLogoAngle: 'Сбросить угол логотипа',
-    reset: 'Сбросить',
-    logoAngle: 'Угол логотипа',
-    select: 'Выбрать',
-    download: '⬇ Скачать',
-    photosAdded: 'Добавлено фото: {count}',
-    nothingToDownload: 'Нет файлов для скачивания',
-    filesDownloaded: 'Скачано файлов: {count}',
-    filesZipped: 'Файлов в ZIP-архиве: {count}'
+    brand: 'Портал инструментов', language: 'Язык', workspace: 'Рабочее пространство',
+    title: 'Инструменты для бизнеса',
+    intro: 'Всё необходимое для ежедневных задач в одном месте. Выберите инструмент и приступайте к работе.',
+    allTools: 'Все инструменты', toolCount: '1 инструмент', available: 'Доступен', category: 'Недвижимость',
+    apartmentTitle: 'Фотографии квартир',
+    apartmentDescription: 'Добавляйте логотип и водяной знак, поворачивайте фотографии и скачивайте готовые изображения.',
+    watermarks: 'Водяные знаки', formats: 'PNG и ZIP', openTool: 'Открыть инструмент',
+    privacy: 'Изображения обрабатываются локально в вашем браузере.'
   },
   en: {
-    toolTitle: 'Apartment Photo Watermark Tool',
-    privacyHint: 'Everything runs locally in your browser. Images are never uploaded.',
-    language: 'Language',
-    photosHeading: '1 · Apartment photos',
-    logoHeading: '2 · Logo',
-    pasteHint: 'Click here, then press',
-    pasteOptions: 'to paste, drag files here, or',
-    chooseFiles: 'Choose files…',
-    chooseFile: 'Choose file…',
-    multipleAllowed: '(you can select several)',
-    rotationHint: 'Rotate the logo separately on each photo using the cards below.',
-    remove: 'Remove',
-    noLogo: 'No logo',
-    logoSet: 'Logo loaded',
-    centerOpacity: 'Middle logo opacity',
-    centerOpacityHint: 'Middle logo opacity — applies to all photos',
-    cornerOpacity: 'Side logo opacity',
-    cornerOpacityHint: 'Bottom-left logo opacity — applies to all photos',
-    selectAll: 'Select all',
-    selectNone: 'Deselect all',
-    downloadAll: '⬇ Download all',
-    downloadAllZip: '🗜 Download all (ZIP)',
-    downloadSelected: '⬇ Download selected',
-    downloadSelectedZip: '🗜 Download selected (ZIP)',
-    empty: 'No apartment photos yet. Paste or choose photos above to preview them with the watermark.',
-    footer: 'The logo appears in the bottom-left corner and in the center. Each logo has its own opacity control, and your choices are saved in this browser. Files are saved as full-resolution PNGs.',
-    photoCount: 'Photos: {count}',
-    selectedCount: 'Selected: {count}',
-    apartment: 'Apartment',
-    rotateApartmentLeft: 'Rotate photo left by 90°',
-    rotateApartmentRight: 'Rotate photo right by 90°',
-    logo: 'Logo',
-    rotateLogoLeft: 'Rotate logo left by 90°',
-    rotateLogoRight: 'Rotate logo right by 90°',
-    resetLogoAngle: 'Reset logo angle',
-    reset: 'Reset',
-    logoAngle: 'Logo angle',
-    select: 'Select',
-    download: '⬇ Download',
-    photosAdded: 'Photos added: {count}',
-    nothingToDownload: 'No files to download',
-    filesDownloaded: 'Files downloaded: {count}',
-    filesZipped: 'Files in ZIP archive: {count}'
+    brand: 'Business tools', language: 'Language', workspace: 'Your workspace',
+    title: 'Tools for your business',
+    intro: 'Your everyday tools, all in one place. Choose a tool and get to work.',
+    allTools: 'All tools', toolCount: '1 tool', available: 'Available', category: 'Real estate',
+    apartmentTitle: 'Apartment images',
+    apartmentDescription: 'Add your logo and watermark, rotate photos, and download images ready to use.',
+    watermarks: 'Watermarks', formats: 'PNG & ZIP', openTool: 'Open tool',
+    privacy: 'Images are processed locally in your browser.'
   }
 };
-function t(key, values = {}){
-  return translations[language][key].replace(/\{(\w+)\}/g, (_, name)=>values[name]);
-}
-
-/* ============================ DOM ============================ */
-const $ = s => document.querySelector(s);
-const grid = $('#grid'), emptyEl = $('#empty'), toolbar = $('#toolbar');
-const aptZone = $('#aptZone'), logoZone = $('#logoZone');
-
-/* ============================ Helpers ============================ */
-function toast(key, values = {}){
-  lastToast = { key, values };
-  const el = $('#toast'); el.textContent = t(key, values); el.classList.add('show');
-  clearTimeout(el._t); el._t = setTimeout(()=>el.classList.remove('show'), 1800);
-}
-function loadImage(src){
-  return new Promise((res,rej)=>{
-    const img = new Image();
-    img.onload = ()=>res(img); img.onerror = rej; img.src = src;
-  });
-}
-function fileToImage(file){
-  return new Promise((res,rej)=>{
-    const fr = new FileReader();
-    fr.onload = ()=> loadImage(fr.result).then(res).catch(rej);
-    fr.onerror = rej; fr.readAsDataURL(file);
-  });
-}
-function sanitize(name){
-  return (name||'').replace(/\.[^.]+$/,'').replace(/[^\w\-]+/g,'_').replace(/^_+|_+$/g,'') || 'apartment';
-}
-function setActiveZone(z){
-  activeZone = z;
-  aptZone.classList.toggle('active', z==='apt');
-  logoZone.classList.toggle('active', z==='logo');
-}
-function loadOpacitySettings(){
-  try{
-    const saved = JSON.parse(localStorage.getItem(OPACITY_STORAGE_KEY)) || {};
-    if(typeof saved.center === 'number' && Number.isFinite(saved.center) && saved.center >= 0 && saved.center <= 1){
-      watermarkOpacity = saved.center;
-    }
-    if(typeof saved.corner === 'number' && Number.isFinite(saved.corner) && saved.corner >= 0 && saved.corner <= 1){
-      cornerOpacity = saved.corner;
-    }
-  }catch(e){ /* Keep defaults if storage is unavailable or contains invalid JSON. */ }
-}
-function saveOpacitySettings(){
-  try{
-    localStorage.setItem(OPACITY_STORAGE_KEY, JSON.stringify({ center:watermarkOpacity, corner:cornerOpacity }));
-  }catch(e){ /* Opacity controls still work when browser storage is unavailable. */ }
-}
-function loadLanguageSettings(){
-  try{
-    const saved = localStorage.getItem(LANGUAGE_STORAGE_KEY);
-    if(saved === 'ru' || saved === 'en') language = saved;
-  }catch(e){ /* Keep Russian as the default when browser storage is unavailable. */ }
-}
+let language = 'ru';
+try{
+  const saved = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+  if(saved === 'ru' || saved === 'en') language = saved;
+}catch(e){ /* Russian remains the default when storage is unavailable. */ }
 function applyLanguage(){
   document.documentElement.lang = language;
-  document.documentElement.dir = 'ltr';
-  document.title = t('toolTitle');
-  document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.dataset.i18n); });
-  document.querySelectorAll('[data-i18n-title]').forEach(el=>{ el.title = t(el.dataset.i18nTitle); });
-  document.querySelectorAll('[data-i18n-alt]').forEach(el=>{ el.alt = t(el.dataset.i18nAlt); });
-  $('#language').value = language;
-  $('#logoBadge').textContent = t(logo.image ? 'logoSet' : 'noLogo');
-  if(lastToast) $('#toast').textContent = t(lastToast.key, lastToast.values);
-  render();
+  document.title = translations[language].title;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = translations[language][el.dataset.i18n]; });
+  document.getElementById('language').value = language;
 }
-
-/* ============================ Compositing ============================ */
-function compose(apt){
-  const r = ((apt.rotation%360)+360)%360;
-  const iw = apt.image.naturalWidth, ih = apt.image.naturalHeight;
-  const swap = (r===90||r===270);
-  const cw = swap?ih:iw, ch = swap?iw:ih;
-
-  const canvas = document.createElement('canvas');
-  canvas.width = cw; canvas.height = ch;
-  const ctx = canvas.getContext('2d');
-  ctx.imageSmoothingQuality = 'high';
-
-  // apartment (rotated in 90° steps)
-  ctx.save();
-  ctx.translate(cw/2, ch/2);
-  ctx.rotate(r*Math.PI/180);
-  ctx.drawImage(apt.image, -iw/2, -ih/2);
-  ctx.restore();
-
-  if(logo.image){
-    const logoRot = apt.logoRotation || 0;
-    drawLogoCenter(ctx, cw, ch, logoRot, watermarkOpacity);
-    drawLogoCorner(ctx, cw, ch, logoRot, cornerOpacity);
-  }
-  return canvas;
-}
-function rotatedBBox(w,h,deg){
-  const a = deg*Math.PI/180, c = Math.abs(Math.cos(a)), s = Math.abs(Math.sin(a));
-  return { w: w*c + h*s, h: w*s + h*c };
-}
-function drawLogoCenter(ctx, cw, ch, rotation, opacity){
-  const lw = logo.image.naturalWidth, lh = logo.image.naturalHeight;
-  const targetW = cw*CENTER_WIDTH_RATIO;
-  const scale = targetW/lw, dw = lw*scale, dh = lh*scale;
-  ctx.save();
-  ctx.globalAlpha = (opacity==null? CENTER_OPACITY : opacity);
-  ctx.translate(cw/2, ch/2);
-  ctx.rotate(rotation*Math.PI/180);
-  ctx.drawImage(logo.image, -dw/2, -dh/2, dw, dh);
-  ctx.restore();
-}
-function drawLogoCorner(ctx, cw, ch, rotation, opacity){
-  const lw = logo.image.naturalWidth, lh = logo.image.naturalHeight;
-  const targetW = cw*CORNER_WIDTH_RATIO;
-  const scale = targetW/lw, dw = lw*scale, dh = lh*scale;
-  const pad = cw*CORNER_PADDING_RATIO;
-  const bb = rotatedBBox(dw, dh, rotation);   // bounding box after rotation
-
-  // phone number occupies the very bottom-left; the logo sits above it
-  const fontSize = Math.max(11, cw*PHONE_FONT_RATIO);
-  const textGap = fontSize*0.5;
-  const textBaseline = ch - pad;              // bottom edge of the text
-  const cx = pad + bb.w/2;
-  const cy = textBaseline - fontSize - textGap - bb.h/2;
-
-  ctx.save();
-  ctx.globalAlpha = opacity;
-  ctx.translate(cx, cy);
-  ctx.rotate(rotation*Math.PI/180);
-  ctx.drawImage(logo.image, -dw/2, -dh/2, dw, dh);
-  ctx.restore();
-
-  // phone number with dark outline for legibility on any background
-  ctx.save();
-  ctx.globalAlpha = 1;
-  ctx.font = `700 ${fontSize}px system-ui, Segoe UI, Arial, sans-serif`;
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'alphabetic';
-  ctx.lineJoin = 'round';
-  ctx.lineWidth = Math.max(2, fontSize*0.14);
-  ctx.strokeStyle = 'rgba(0,0,0,0.6)';
-  ctx.fillStyle = '#ffffff';
-  ctx.strokeText(PHONE_NUMBER, pad, textBaseline);
-  ctx.fillText(PHONE_NUMBER, pad, textBaseline);
-  ctx.restore();
-}
-
-/* ============================ Render UI ============================ */
-function render(){
-  emptyEl.style.display = apts.length ? 'none' : 'block';
-  toolbar.style.display = apts.length ? 'flex' : 'none';
-  $('#aptBadge').textContent = t('photoCount', { count:apts.length });
-
-  grid.innerHTML = '';
-  apts.forEach(apt=>{
-    const card = document.createElement('div');
-    card.className = 'card' + (apt.selected?' selected':'');
-
-    const prev = document.createElement('div');
-    prev.className = 'preview';
-    prev.appendChild(compose(apt));
-    card.appendChild(prev);
-
-    const meta = document.createElement('div');
-    meta.className = 'meta';
-    const logoRotPct = (((apt.logoRotation||0)%360)+360)%360;
-    const sliderVal = logoRotPct>180 ? logoRotPct-360 : logoRotPct;
-    meta.innerHTML = `
-      <div class="name" title="${apt.name}">${apt.name}</div>
-      <div class="row between">
-        <span class="ctl-label">🏢 ${t('apartment')}</span>
-        <div class="row">
-          <button class="btn small iconbtn rotl" title="${t('rotateApartmentLeft')}">↺</button>
-          <button class="btn small iconbtn rotr" title="${t('rotateApartmentRight')}">↻</button>
-        </div>
-      </div>
-      <div class="row between" ${logo.image?'':'style="opacity:.4;pointer-events:none"'}>
-        <span class="ctl-label">🖼 ${t('logo')}</span>
-        <div class="row">
-          <button class="btn small iconbtn lrotl" title="${t('rotateLogoLeft')}">↺</button>
-          <button class="btn small iconbtn lrotr" title="${t('rotateLogoRight')}">↻</button>
-          <button class="btn small ghost lreset" title="${t('resetLogoAngle')}">${t('reset')}</button>
-        </div>
-      </div>
-      <div class="row" ${logo.image?'':'style="opacity:.4;pointer-events:none"'}>
-        <span class="ctl-label">${t('logoAngle')} <span class="lval">${Math.round(sliderVal)}°</span></span>
-        <input type="range" class="langle" min="-180" max="180" step="1" value="${sliderVal}" style="flex:1">
-      </div>
-      <div class="row between">
-        <label class="chk">
-          <input type="checkbox" ${apt.selected?'checked':''}> ${t('select')}
-        </label>
-        <div class="row">
-          <button class="btn small dl">${t('download')}</button>
-          <button class="btn small ghost rm">🗑 ${t('remove')}</button>
-        </div>
-      </div>`;
-    card.appendChild(meta);
-
-    meta.querySelector('.chk input').addEventListener('change', e=>{
-      apt.selected = e.target.checked; card.classList.toggle('selected', apt.selected); updateSelCount();
-    });
-    meta.querySelector('.rotl').addEventListener('click', ()=>{ apt.rotation -= 90; refreshCard(card, apt); });
-    meta.querySelector('.rotr').addEventListener('click', ()=>{ apt.rotation += 90; refreshCard(card, apt); });
-
-    const langle = meta.querySelector('.langle');
-    const lval = meta.querySelector('.lval');
-    function syncSlider(){
-      let v = ((apt.logoRotation%360)+360)%360; if(v>180) v-=360;
-      langle.value = v; lval.textContent = Math.round(v)+'°';
-    }
-    meta.querySelector('.lrotl').addEventListener('click', ()=>{ apt.logoRotation = (apt.logoRotation||0)-90; syncSlider(); refreshCard(card, apt); });
-    meta.querySelector('.lrotr').addEventListener('click', ()=>{ apt.logoRotation = (apt.logoRotation||0)+90; syncSlider(); refreshCard(card, apt); });
-    meta.querySelector('.lreset').addEventListener('click', ()=>{ apt.logoRotation = 0; syncSlider(); refreshCard(card, apt); });
-    langle.addEventListener('input', e=>{ apt.logoRotation = +e.target.value; lval.textContent = Math.round(+e.target.value)+'°'; refreshCard(card, apt); });
-
-    meta.querySelector('.dl').addEventListener('click', ()=> downloadOne(apt));
-    meta.querySelector('.rm').addEventListener('click', ()=>{
-      const i = apts.indexOf(apt); if(i>-1){ apts.splice(i,1); render(); }
-    });
-
-    grid.appendChild(card);
-  });
-  updateSelCount();
-}
-function refreshCard(card, apt){
-  const prev = card.querySelector('.preview');
-  prev.innerHTML = ''; prev.appendChild(compose(apt));
-}
-function refreshAllPreviews(){
-  const cards = grid.children;
-  for(let i=0; i<apts.length && i<cards.length; i++){ refreshCard(cards[i], apts[i]); }
-}
-function updateSelCount(){
-  const n = apts.filter(a=>a.selected).length;
-  $('#selCount').textContent = t('selectedCount', { count:n });
-}
-
-/* ============================ Add images ============================ */
-async function addApartments(files){
-  let added = 0;
-  for(const file of files){
-    if(!file.type.startsWith('image/')) continue;
-    try{
-      const img = await fileToImage(file);
-      apts.push({ id:nextId++, image:img, name: file.name || ('apartment-'+nextId+'.png'), rotation:0, logoRotation:0, selected:false });
-      added++;
-    }catch(e){ console.error(e); }
-  }
-  if(added){ render(); toast('photosAdded', { count:added }); }
-}
-async function setLogo(file){
-  if(!file || !file.type.startsWith('image/')) return;
-  try{
-    const img = await fileToImage(file);
-    logo.image = img;
-    $('#logoImg').src = img.src;
-    $('#logoPreview').style.display = 'flex';
-    $('#logoBadge').textContent = t('logoSet');
-    render(); toast('logoSet');
-  }catch(e){ console.error(e); }
-}
-/* ============================ Downloads ============================ */
-function canvasToBlob(canvas){
-  return new Promise(res=> canvas.toBlob(res, 'image/png'));
-}
-function triggerDownload(blob, filename){
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url), 4000);
-}
-async function downloadOne(apt){
-  const blob = await canvasToBlob(compose(apt));
-  triggerDownload(blob, sanitize(apt.name)+'_watermarked.png');
-}
-function uniqueNames(list){
-  const seen = {}; return list.map(apt=>{
-    let base = sanitize(apt.name)+'_watermarked';
-    let name = base+'.png', i=1;
-    while(seen[name]){ name = base+'_'+(i++)+'.png'; }
-    seen[name]=1; return { apt, name };
-  });
-}
-async function downloadMany(list){
-  if(!list.length){ toast('nothingToDownload'); return; }
-  const named = uniqueNames(list);
-  for(const {apt,name} of named){
-    const blob = await canvasToBlob(compose(apt));
-    triggerDownload(blob, name);
-    await new Promise(r=>setTimeout(r, 250)); // stagger so the browser allows all
-  }
-  toast('filesDownloaded', { count:named.length });
-}
-async function downloadZip(list){
-  if(!list.length){ toast('nothingToDownload'); return; }
-  const named = uniqueNames(list);
-  const entries = [];
-  for(const {apt,name} of named){
-    const blob = await canvasToBlob(compose(apt));
-    const buf = new Uint8Array(await blob.arrayBuffer());
-    entries.push({ name, data: buf });
-  }
-  const zip = makeZip(entries);
-  triggerDownload(new Blob([zip],{type:'application/zip'}), 'apartments_watermarked.zip');
-  toast('filesZipped', { count:named.length });
-}
-
-/* ============================ Minimal ZIP (store, no deps) ============================ */
-const CRC_TABLE = (()=>{
-  const t = new Uint32Array(256);
-  for(let n=0;n<256;n++){ let c=n; for(let k=0;k<8;k++){ c = (c&1)?(0xEDB88320 ^ (c>>>1)):(c>>>1); } t[n]=c>>>0; }
-  return t;
-})();
-function crc32(bytes){
-  let crc = 0xFFFFFFFF;
-  for(let i=0;i<bytes.length;i++){ crc = (crc>>>8) ^ CRC_TABLE[(crc ^ bytes[i]) & 0xFF]; }
-  return (crc ^ 0xFFFFFFFF) >>> 0;
-}
-function strBytes(s){ const a = new Uint8Array(s.length); for(let i=0;i<s.length;i++) a[i]=s.charCodeAt(i)&0xFF; return a; }
-function makeZip(files){
-  // ZIP with STORE method (PNGs are already compressed). Fixed DOS date/time.
-  const chunks = [], central = [];
-  let offset = 0;
-  const DOS_TIME = 0, DOS_DATE = 0x21<<5 | 1; // arbitrary valid date (1980-01-01-ish)
-  for(const f of files){
-    const nameB = strBytes(f.name);
-    const crc = crc32(f.data);
-    const size = f.data.length;
-    // local file header
-    const lh = new DataView(new ArrayBuffer(30));
-    lh.setUint32(0, 0x04034b50, true);
-    lh.setUint16(4, 20, true);          // version needed
-    lh.setUint16(6, 0x0800, true);      // flags: UTF-8 names
-    lh.setUint16(8, 0, true);           // method 0 = store
-    lh.setUint16(10, DOS_TIME, true);
-    lh.setUint16(12, DOS_DATE, true);
-    lh.setUint32(14, crc, true);
-    lh.setUint32(18, size, true);       // compressed size
-    lh.setUint32(22, size, true);       // uncompressed size
-    lh.setUint16(26, nameB.length, true);
-    lh.setUint16(28, 0, true);          // extra len
-    const lhB = new Uint8Array(lh.buffer);
-    chunks.push(lhB, nameB, f.data);
-
-    // central directory record
-    const cd = new DataView(new ArrayBuffer(46));
-    cd.setUint32(0, 0x02014b50, true);
-    cd.setUint16(4, 20, true);          // version made by
-    cd.setUint16(6, 20, true);          // version needed
-    cd.setUint16(8, 0x0800, true);
-    cd.setUint16(10, 0, true);
-    cd.setUint16(12, DOS_TIME, true);
-    cd.setUint16(14, DOS_DATE, true);
-    cd.setUint32(16, crc, true);
-    cd.setUint32(20, size, true);
-    cd.setUint32(24, size, true);
-    cd.setUint16(28, nameB.length, true);
-    cd.setUint16(30, 0, true);          // extra
-    cd.setUint16(32, 0, true);          // comment
-    cd.setUint16(34, 0, true);          // disk #
-    cd.setUint16(36, 0, true);          // internal attrs
-    cd.setUint32(38, 0, true);          // external attrs
-    cd.setUint32(42, offset, true);     // local header offset
-    central.push(new Uint8Array(cd.buffer), nameB);
-
-    offset += lhB.length + nameB.length + size;
-  }
-  const centralStart = offset;
-  let centralSize = 0; central.forEach(c=> centralSize += c.length);
-
-  const eocd = new DataView(new ArrayBuffer(22));
-  eocd.setUint32(0, 0x06054b50, true);
-  eocd.setUint16(4, 0, true);
-  eocd.setUint16(6, 0, true);
-  eocd.setUint16(8, files.length, true);
-  eocd.setUint16(10, files.length, true);
-  eocd.setUint32(12, centralSize, true);
-  eocd.setUint32(16, centralStart, true);
-  eocd.setUint16(20, 0, true);
-
-  const all = [...chunks, ...central, new Uint8Array(eocd.buffer)];
-  let total = 0; all.forEach(c=> total += c.length);
-  const out = new Uint8Array(total);
-  let p = 0; for(const c of all){ out.set(c, p); p += c.length; }
-  return out;
-}
-
-/* ============================ Events: zones ============================ */
-aptZone.addEventListener('click', e=>{ if(e.target.id!=='aptPick') setActiveZone('apt'); });
-logoZone.addEventListener('click', e=>{ setActiveZone('logo'); });
-
-$('#aptPick').addEventListener('click', e=>{ e.stopPropagation(); $('#aptInput').click(); });
-$('#logoPick').addEventListener('click', e=>{ e.stopPropagation(); $('#logoInput').click(); });
-$('#aptInput').addEventListener('change', e=>{ addApartments([...e.target.files]); e.target.value=''; });
-$('#logoInput').addEventListener('change', e=>{ setLogo(e.target.files[0]); e.target.value=''; });
-
-// drag & drop
-function wireDrop(zone, handler){
-  ['dragenter','dragover'].forEach(ev=> zone.addEventListener(ev, e=>{ e.preventDefault(); zone.classList.add('drag'); }));
-  ['dragleave','drop'].forEach(ev=> zone.addEventListener(ev, e=>{ e.preventDefault(); zone.classList.remove('drag'); }));
-  zone.addEventListener('drop', e=>{ handler([...e.dataTransfer.files]); });
-}
-wireDrop(aptZone, files=> addApartments(files));
-wireDrop(logoZone, files=> setLogo(files[0]));
-
-// paste — routes to the active zone
-document.addEventListener('paste', e=>{
-  const items = e.clipboardData && e.clipboardData.items;
-  if(!items) return;
-  const imgs = [];
-  for(const it of items){ if(it.type && it.type.startsWith('image/')){ const f=it.getAsFile(); if(f) imgs.push(f); } }
-  if(!imgs.length) return;
-  e.preventDefault();
-  if(activeZone==='logo') setLogo(imgs[0]);
-  else addApartments(imgs);
-});
-
-/* ============================ Events: logo controls ============================ */
-$('#logoRemove').addEventListener('click', ()=>{
-  logo.image=null; $('#logoPreview').style.display='none'; $('#logoBadge').textContent=t('noLogo'); render();
-});
-
-/* ============================ Events: language ============================ */
-loadLanguageSettings();
-$('#language').addEventListener('change', e=>{
+document.getElementById('language').addEventListener('change', e=>{
   language = e.target.value;
-  try{ localStorage.setItem(LANGUAGE_STORAGE_KEY, language); }catch(e){ /* Switching languages still works without storage. */ }
+  try{ localStorage.setItem(LANGUAGE_STORAGE_KEY, language); }catch(e){ /* Language switching still works without storage. */ }
   applyLanguage();
 });
-
-/* ============================ Events: toolbar ============================ */
-loadOpacitySettings();
-$('#wmOpacity').value = Math.round(watermarkOpacity*100);
-$('#wmVal').textContent = $('#wmOpacity').value+'%';
-$('#cornerOpacity').value = Math.round(cornerOpacity*100);
-$('#cornerVal').textContent = $('#cornerOpacity').value+'%';
-$('#wmOpacity').addEventListener('input', e=>{
-  watermarkOpacity = +e.target.value/100;
-  $('#wmVal').textContent = Math.round(+e.target.value)+'%';
-  saveOpacitySettings();
-  refreshAllPreviews();
-});
-$('#cornerOpacity').addEventListener('input', e=>{
-  cornerOpacity = +e.target.value/100;
-  $('#cornerVal').textContent = Math.round(+e.target.value)+'%';
-  saveOpacitySettings();
-  refreshAllPreviews();
-});
-$('#selectAll').addEventListener('click', ()=>{ apts.forEach(a=>a.selected=true); render(); });
-$('#selectNone').addEventListener('click', ()=>{ apts.forEach(a=>a.selected=false); render(); });
-$('#dlAll').addEventListener('click', ()=> downloadMany(apts.slice()));
-$('#dlAllZip').addEventListener('click', ()=> downloadZip(apts.slice()));
-$('#dlSel').addEventListener('click', ()=> downloadMany(apts.filter(a=>a.selected)));
-$('#dlSelZip').addEventListener('click', ()=> downloadZip(apts.filter(a=>a.selected)));
-
-setActiveZone('apt');
 applyLanguage();
 </script>
 </body>
