@@ -83,6 +83,7 @@
         <legend data-i18n="captionHeading">2 · Подпись</legend>
         <label class="choice"><input type="radio" name="caption" value="bought" checked><span data-i18n="bought">Купил</span><b lang="he" dir="rtl">קניתי עם DK Group</b></label>
         <label class="choice"><input type="radio" name="caption" value="sold"><span data-i18n="sold">Продал</span><b lang="he" dir="rtl">מכרתי דרך DK Group</b></label>
+        <label class="choice"><input type="radio" name="caption" value="advisor"><span data-i18n="advisor">Ипотечный консультант</span><b lang="he" dir="rtl">דוד קופרשלק יועץ משכנתאות מדופלם</b></label>
         <p class="caption-note" data-i18n="captionNote">Подпись на готовом изображении будет на иврите.</p>
       </fieldset>
       <div class="brand-details">
@@ -112,13 +113,14 @@ const CAPTION_STORAGE_KEY = 'dkCustomerPhotoCaption';
 const PHONE = '054-707-7117';
 const BUSINESS_NAME = 'DK Group ייעוץ נדלן ומשכנתאות';
 const ADVISOR_NAME = 'דוד קופרשלק';
-const captions = { bought:'קניתי עם DK Group', sold:'מכרתי דרך DK Group' };
+const captions = { bought:'קניתי עם DK Group', sold:'מכרתי דרך DK Group', advisor:'דוד קופרשלק יועץ משכנתאות מדופלם' };
+const ADVISOR_TITLE = 'יועץ משכנתאות מדופלם';
 const translations = {
   ru:{
     title:'Фото с клиентами',allTools:'Все инструменты',language:'Язык',
     intro:'Загрузите совместную фотографию и выберите подпись. Логотип DK Group и ваш телефон появятся на фирменной полосе под фото.',
     photoHeading:'1 · Фотография',choosePhoto:'Выберите фотографию',uploadHint:'Или перетащите сюда / вставьте Ctrl+V',remove:'Удалить',
-    captionHeading:'2 · Подпись',bought:'Купил',sold:'Продал',captionNote:'Подпись на готовом изображении будет на иврите.',
+    captionHeading:'2 · Подпись',bought:'Купил',sold:'Продал',advisor:'Ипотечный консультант',captionNote:'Подпись на готовом изображении будет на иврите.',
     brandNote:'На каждом изображении',download:'↓ Скачать PNG',preview:'Предпросмотр',empty:'Загрузите фотографию, чтобы увидеть готовое изображение.',
     previewNote:'Фото сохраняется целиком. Фирменная полоса добавляется снизу; PNG скачивается в исходном разрешении фотографии.',
     privacy:'Всё работает локально в браузере. Ваши фотографии не отправляются в интернет.',
@@ -129,7 +131,7 @@ const translations = {
     title:'Customer photos',allTools:'All tools',language:'Language',
     intro:'Upload a photo together and choose a caption. Your DK Group logo and phone number will appear in a branded banner below the photo.',
     photoHeading:'1 · Photo',choosePhoto:'Choose a photo',uploadHint:'Or drag it here / paste with Ctrl+V',remove:'Remove',
-    captionHeading:'2 · Caption',bought:'Bought',sold:'Sold',captionNote:'The caption on the finished image stays in Hebrew.',
+    captionHeading:'2 · Caption',bought:'Bought',sold:'Sold',advisor:'Mortgage advisor',captionNote:'The caption on the finished image stays in Hebrew.',
     brandNote:'On every image',download:'↓ Download PNG',preview:'Preview',empty:'Upload a photo to preview the finished image.',
     previewNote:'Your entire photo is preserved. The branded banner is added below it; the PNG keeps the photo’s original resolution.',
     privacy:'Everything runs locally in your browser. Your photos are never uploaded.',
@@ -143,7 +145,7 @@ try{
   const savedLanguage=localStorage.getItem(LANGUAGE_STORAGE_KEY);
   if(savedLanguage==='ru'||savedLanguage==='en') language=savedLanguage;
   const savedCaption=localStorage.getItem(CAPTION_STORAGE_KEY);
-  if(savedCaption==='bought'||savedCaption==='sold') caption=savedCaption;
+  if(Object.hasOwn(captions,savedCaption)) caption=savedCaption;
 }catch(e){ /* Defaults remain available without browser storage. */ }
 function setStatus(key){statusKey=key;$('status').textContent=key?translations[language][key]:'';}
 function applyLanguage(){
@@ -179,17 +181,24 @@ function renderPreview(){
   const pad=width*.045, logoW=width*.29, logoH=logoW*1020/1600;
   ctx.drawImage(brandImage,0,245,1600,1020,pad,height+(banner-logoH)/2,logoW,logoH);
   const textRight=width-pad, textWidth=width*.57;
-  let fontSize=width*.049;
   ctx.direction='rtl';ctx.textAlign='right';ctx.textBaseline='middle';
-  ctx.font=`700 ${fontSize}px Arial, sans-serif`;
-  while(ctx.measureText(captions[caption]).width>textWidth&&fontSize>width*.025){fontSize-=width*.001;ctx.font=`700 ${fontSize}px Arial, sans-serif`;}
-  ctx.fillStyle='#4d4f50';ctx.fillText(captions[caption],textRight,height+banner*.25,textWidth);
-  ctx.font=`400 ${width*.022}px Arial, sans-serif`;
-  ctx.fillStyle='#66686a';ctx.fillText(BUSINESS_NAME,textRight,height+banner*.46,textWidth);
-  ctx.font=`700 ${width*.030}px Arial, sans-serif`;
-  ctx.fillStyle='#4d4f50';ctx.fillText(ADVISOR_NAME,textRight,height+banner*.65,textWidth);
+  if(caption==='advisor'){
+    ctx.font=`700 ${width*.049}px Arial, sans-serif`;
+    ctx.fillStyle='#4d4f50';ctx.fillText(ADVISOR_NAME,textRight,height+banner*.30,textWidth);
+    ctx.font=`500 ${width*.031}px Arial, sans-serif`;
+    ctx.fillStyle='#66686a';ctx.fillText(ADVISOR_TITLE,textRight,height+banner*.51,textWidth);
+  }else{
+    let fontSize=width*.049;
+    ctx.font=`700 ${fontSize}px Arial, sans-serif`;
+    while(ctx.measureText(captions[caption]).width>textWidth&&fontSize>width*.025){fontSize-=width*.001;ctx.font=`700 ${fontSize}px Arial, sans-serif`;}
+    ctx.fillStyle='#4d4f50';ctx.fillText(captions[caption],textRight,height+banner*.25,textWidth);
+    ctx.font=`400 ${width*.022}px Arial, sans-serif`;
+    ctx.fillStyle='#66686a';ctx.fillText(BUSINESS_NAME,textRight,height+banner*.46,textWidth);
+    ctx.font=`700 ${width*.030}px Arial, sans-serif`;
+    ctx.fillStyle='#4d4f50';ctx.fillText(ADVISOR_NAME,textRight,height+banner*.65,textWidth);
+  }
   ctx.direction='ltr';ctx.font=`700 ${width*.037}px Arial, sans-serif`;
-  ctx.fillStyle='#c36a46';ctx.fillText(PHONE,textRight,height+banner*.84,textWidth);
+  ctx.fillStyle='#c36a46';ctx.fillText(PHONE,textRight,height+banner*(caption==='advisor' ? 0.76 : 0.84),textWidth);
   $('dimensions').textContent=`${canvas.width} × ${canvas.height} px`;
 }
 async function setPhoto(file){
